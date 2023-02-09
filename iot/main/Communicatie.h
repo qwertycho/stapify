@@ -4,35 +4,56 @@
 #include <Arduino.h>
 #include "logger.h"
 
-class Communicatie{
+class Communicator{
     private:
-        String ssid = "stapifi";
-        String pass = "stapifi";
-        u_int8_t serialSpeed = 9600;
-        Logger logger;
+        String ssid = "Stapwifi";
+        String password = "Stapwifi";
+        String name = "Staptor";
+        u_int8_t buadRate = 9600;
+
+        // Logger* = mooie interfacce voor logger (momenteel niks omdat circular dependency)
+        // comBuffer = buffer voor communicatie (later)
+
+        static Communicator*
+
+        instancePtr;
+
+        Communicator(){}
+
+        void setupSerial(){
+            Serial.begin(buadRate);
+        }
+
+        void checkSerial(){
+            if(!Serial){
+                setupSerial();
+            }
+        }
+
 
     public:
-        Communicatie(const Logger &logger){
-            logger = logger;
+        Communicator(const Communicator &obj) = delete;
+
+        static Communicator* getInstance(){
+            if(instancePtr == nullptr){
+                instancePtr = new Communicator();
+            }
+            return instancePtr;
         }
 
-        void setSerialSpeed(u_int8_t speed){
-            serialSpeed = speed;
-            closeSerial();
-            connectSerial(serialSpeed);
+        void sendSerial(String message){
+            // stuur naar buffer
+            checkSerial();
+            // heel de buffer stuurt naar serial (later)
+            Serial.println(message);
+            // buffer leegmaken (later)
         }
 
-        void createWifi();
-
-
-
-        void connectBluetooth();
-
-        void connectSerial(u_int8_t serialSpeed);){
-            Serial.begin(serialSpeed);
+        void sendBluetooth(String message){
+            // stuur naar buffer
+            // heel de buffer stuurt naar bluetooth (later)
+            // buffer leegmaken (later)
         }
 
-        void closeSerial(){
-            Serial.end();
-        }
-}
+
+};

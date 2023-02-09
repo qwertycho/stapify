@@ -8,7 +8,6 @@
 // de class Logger is er om alleen bepaalde informatie te loggen en om als enkel punt te dienen voor het loggen van informatie
 // het maakt gebruik van de singleton pattern om ervoor te zorgen dat er maar 1 instance logger is
 class Logger {
-
   private:
     u_int8_t logLevel = 0;
 
@@ -43,7 +42,6 @@ class Logger {
     }
 
   public:
-
     Logger(const Logger &obj) = delete;
 
 // de functie die moet worden aangesproken om een instance van de class te krijgen
@@ -70,10 +68,8 @@ class Logger {
         }
       }
       }
-
 }; 
 
 Logger* Logger::instancePTR = nullptr;
-
 
 #endif
