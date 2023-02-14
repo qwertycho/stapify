@@ -1,14 +1,15 @@
-#include "logger.h"
+#include "Communicatie.h"
 
-// een nieuwe instance van de class Logger krijgen
-Logger* logger = Logger::getInstance(1);
+
+// een nieuwe instance van de class Communicatie krijgen
+// com is de instance van de class Communicatie
+Communicatie* com = Communicatie::getInstance();
 
 void setup(){
-    Serial.begin(9600);
+    com->enableSerial();
+    com->log(1, "setup complete");
 }
 
 void loop(){
-    logger->log(1, "test");
-
-    delay(1000);
+        com->log(1, "test");
 }
