@@ -4,7 +4,6 @@
 
 // de class Logger is er om alleen bepaalde informatie te loggen en om als enkel punt te dienen voor het loggen van informatie
 class Logger {
-
   private:
     u_int8_t logLevel = 0;
 
@@ -47,7 +46,6 @@ class Logger {
         }
       }
       }
-
 }; 
 
 #endif
