@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 #include "logger.h"
+#include <Scheduler.h>
+#include "Buffer.h"
+#include <ArduinoBLE.h>
 
 
 // COmmunicatie is een interface voor de logger class.
@@ -11,9 +14,12 @@
 class Communicatie : public Logger{
     // de instellingen voor de communicatie
     private:
+        String BLEService = "19B10000-E8F2-537E-4F6C-D104768A1214";
         String ssid = "stapifi";
         String pass = "stapifi";
         int serialSpeed = 9600;
+        ComBuffer buffer = ComBuffer();
+
 // de pointer naar de enige instance van de class, deze word gedeelt als de functie getInstance() wordt aangeroepen
         static Communicatie* instancePTR;
         Communicatie(){}
@@ -50,18 +56,32 @@ class Communicatie : public Logger{
     // controleerd eerst of er al een verbinding is
     // voor bluetooth is de library nodig: arduinoBLE
         void enableBLE(){
-            if(!BLE){
-                BLE.begin();
-                log(1, "BLE connected");
+            if(!BLE.begin()){
+                log(3, "BLE failed to start");
             }else{
-                log(2, "BLE already connected");
+                BLE.setLocalName(ssid);
+                BLE.setAdvertisedService(BLEService);
+                BLE.addService(BLEService);
+                BLE.advertise();
+                log(1, "BLE started");
             }
+        }
+        
+        void getDevice(){
+            BLEDevice tellie = BLE.central();
+        }
+        
+        void sendMessage(String type ,String message){
+            String msgType = "[" + type + "] ";
+            bool isEven = (message.length() % 2 == 0);
+            Serial.println(msgType + message + " ," + isEven + ";");
         }
 
     // dit is een functie die moet worden geimplementeerd omdat het een pure virtual functie is in de class Logger
     // oftewel: deze functie maakt Logger werkend.
-        void sendMessage(String message){
-            Serial.println(message);
+        void sendLog(String message){
+            bool isEven = (message.length() % 2 == 0);
+            Serial.println("[LOG] " + message + " ," + isEven + ";");
         }
 };
 
