@@ -34,7 +34,7 @@ class Logger {
       this->logLevel = logLevel;
     }
 
-  virtual void sendMessage(String message) = 0;
+  virtual void sendLog(String message) = 0;
 
 // Ontvangt een logniveau en een bericht
 // Als het logniveau hoger is dan het logniveau van de logger wordt het bericht geprint
@@ -42,7 +42,7 @@ class Logger {
       if (logLevel >= this->logLevel) {
         if(Serial){
           // Serial.println(getInfoMessage(logLevel, message));
-          sendMessage(getInfoMessage(logLevel, message));
+          sendLog(getInfoMessage(logLevel, message));
         }
       }
       }
