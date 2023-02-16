@@ -11,8 +11,8 @@ class ComBuffer{
         vector<String> data;
 
     public:
-        ComBuffer();
-        ~ComBuffer();
+        ComBuffer(){}
+        ~ComBuffer(){}
 
 // Voeg een String toe aan de buffer
     void saveData(String bericht){
