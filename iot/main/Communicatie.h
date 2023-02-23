@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include "logger.h"
-#include <Scheduler.h>
 #include "Buffer.h"
 #include <ArduinoBLE.h>
 
@@ -14,15 +13,17 @@
 class Communicatie : public Logger{
     // de instellingen voor de communicatie
     private:
-        String BLEService = "19B10000-E8F2-537E-4F6C-D104768A1214";
+        BLEService service = "19B10000-E8F2-537E-4F6C-D104768A1214";
         String ssid = "stapifi";
         String pass = "stapifi";
         int serialSpeed = 9600;
-        ComBuffer buffer = ComBuffer();
+        ComBuffer buffer; 
 
 // de pointer naar de enige instance van de class, deze word gedeelt als de functie getInstance() wordt aangeroepen
         static Communicatie* instancePTR;
-        Communicatie(){}
+        Communicatie(){
+            buffer = ComBuffer();
+        }
 
     public:
 
@@ -59,9 +60,10 @@ class Communicatie : public Logger{
             if(!BLE.begin()){
                 log(3, "BLE failed to start");
             }else{
-                BLE.setLocalName(ssid);
-                BLE.setAdvertisedService(BLEService);
-                BLE.addService(BLEService);
+                // voor wat voor reden dan ook wilt setLocalName() een char* hebben en geen String
+                BLE.setLocalName("Staptor");
+                BLE.setAdvertisedService(service);
+                BLE.addService(service);
                 BLE.advertise();
                 log(1, "BLE started");
             }
@@ -70,11 +72,15 @@ class Communicatie : public Logger{
         void getDevice(){
             BLEDevice tellie = BLE.central();
         }
+
+        bool isEven(String& message){
+            bool isEven = (message.length() % 2 == 0);
+            return isEven;
+        }
         
         void sendMessage(String type ,String message){
             String msgType = "[" + type + "] ";
-            bool isEven = (message.length() % 2 == 0);
-            Serial.println(msgType + message + " ," + isEven + ";");
+            Serial.println(msgType + message + " ," + isEven(message) + ";");
         }
 
     // dit is een functie die moet worden geimplementeerd omdat het een pure virtual functie is in de class Logger

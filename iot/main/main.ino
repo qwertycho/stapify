@@ -7,6 +7,7 @@ Communicatie* com = Communicatie::getInstance();
 
 void setup(){
     com->enableSerial();
+    com->enableBLE();
     com->log(1, "setup complete");
 }
 
