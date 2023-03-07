@@ -49,14 +49,14 @@ class Communicatie : public Logger{
     // start een bluetooth verbinding
     // controleerd eerst of er al een verbinding is
     // voor bluetooth is de library nodig: arduinoBLE
-        void enableBLE(){
-            if(!BLE){
-                BLE.begin();
-                log(1, "BLE connected");
-            }else{
-                log(2, "BLE already connected");
-            }
-        }
+        // void enableBLE(){
+        //     if(!BLE){
+        //         BLE.begin();
+        //         log(1, "BLE connected");
+        //     }else{
+        //         log(2, "BLE already connected");
+        //     }
+        // }
 
     // dit is een functie die moet worden geimplementeerd omdat het een pure virtual functie is in de class Logger
     // oftewel: deze functie maakt Logger werkend.
