@@ -20,6 +20,7 @@ private:
     String pass = "stapifi";
     int serialSpeed = 9600;
     ComBuffer buffer;
+    bool needFeedback = false; //of de communicatie een feedback nodig heeft van de ontvanger
 
     // de pointer naar de enige instance van de class, deze word gedeelt als de functie getInstance() wordt aangeroepen
     static Communicatie *instancePTR;
@@ -76,11 +77,16 @@ public:
         }
         else
         {
+            BLEStringCharacteristic fileNameCharacteristic("2D2F88C4-F244-5A80-21F1-EE0224E80658", BLERead | BLEWrite, 20 );
             // voor wat voor reden dan ook wilt setLocalName() een char* hebben en geen String
             BLE.setLocalName("Staptor");
+            service.addCharacteristic(fileNameCharacteristic);
+
             BLE.setAdvertisedService(service);
             BLE.addService(service);
             BLE.advertise();
+
+
             log(1, "BLE started");
         }
     }
@@ -153,6 +159,15 @@ public:
         }
         return true;
     }
+
+    BLEService getService(){
+        return service;
+    }
+
+    BLEStringCharacteristic getCharacteristic(){
+        return BLEStringCharacteristic("2D2F88C4-F244-5A80-21F1-EE0224E80658", BLERead | BLEWrite, 20 ); 
+    }
+    
 };
 
 // de initialisatie van de pointer naar de instance, maakt ding null zodat de functie getInstance() weet dat er nog geen instance is.
