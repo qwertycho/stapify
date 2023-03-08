@@ -39,7 +39,7 @@ void setup() {
   }
 
   // set advertised local name and service UUID:
-  BLE.setLocalName("LED");
+  BLE.setLocalName("staptorBLE");
   BLE.setAdvertisedService(ledService);
 
   // add the characteristic to the service
@@ -71,14 +71,15 @@ void loop() {
     while (central.connected()) {
       // if the remote device wrote to the characteristic,
       // use the value to control the LED:
-      if (switchCharacteristic.written()) {
-        if (switchCharacteristic.value()) {   // any value other than 0
-          Serial.println("LED on");
-          digitalWrite(ledPin, HIGH);         // will turn the LED on
-        } else {                              // a 0 value
-          Serial.println(F("LED off"));
-          digitalWrite(ledPin, LOW);          // will turn the LED off
-        }
+      String sendData = "Hello World!";
+      for (int i = 0; i < sendData.length(); i++) {
+        byte byteData = sendData.charAt(i);
+        switchCharacteristic.writeValue(sendData.charAt(i));
+        Serial.print("Sent: ");
+        Serial.print(byteData);
+        Serial.print(" - ");
+        Serial.println(sendData.charAt(i));
+
       }
     }
 
