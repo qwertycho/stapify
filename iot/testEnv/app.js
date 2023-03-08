@@ -34,9 +34,8 @@ async function test() {
       "19b10001-e8f2-537e-4f6c-d104768a1214"
     );
     let buffer = await characteristic1.readValue();
-    let buffer2 = await characteristic1.rawListeners();
+    
     console.log(buffer.toString("ascii"));
-    console.log(buffer2);
   }
 }
 

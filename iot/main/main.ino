@@ -72,14 +72,16 @@ void loop() {
       // if the remote device wrote to the characteristic,
       // use the value to control the LED:
       String sendData = "Hello World!";
+      switchCharacteristic.canSubscribe();
       for (int i = 0; i < sendData.length(); i++) {
         byte byteData = sendData.charAt(i);
         switchCharacteristic.writeValue(sendData.charAt(i));
+        switchCharacteristic.valueUpdated();
         Serial.print("Sent: ");
         Serial.print(byteData);
         Serial.print(" - ");
         Serial.println(sendData.charAt(i));
-
+        delay(1);
       }
     }
 
