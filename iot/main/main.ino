@@ -1,15 +1,22 @@
-#include "Communicatie.h"
+#include "leds.h"
+#include "Tijd.h"
 
+#include "Communicatie.h"
 
 // een nieuwe instance van de class Communicatie krijgen
 // com is de instance van de class Communicatie
 Communicatie* com = Communicatie::getInstance();
+Tijd* tijd = Tijd::getInstance();
 
-void setup(){
+void setup()
+{
+    ledSetup();
     com->enableSerial();
-    com->log(1, "setup complete");
 }
 
-void loop(){
-        com->log(1, "test");
+void loop()
+{
+    tijd->tick();
+    tijd->on();
+    com->sendMessage("ding","test");
 }
