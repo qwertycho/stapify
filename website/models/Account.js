@@ -1,5 +1,7 @@
 const pool = require("../models/Database");
 const AccountDetails = require("../models/AccountDetails");
+const bcrypt = require('bcrypt');
+const saltRounds = 2;
 
 class Accounts {
   constructor(pool) {
@@ -45,15 +47,19 @@ class Accounts {
     try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
-        "SELECT accountID FROM accounts WHERE username = ? AND wachtwoord = ?",
-        [username, password]
+        "SELECT username, wachtwoord FROM accounts WHERE username = ?",
+        [username]
       );
-      conn.release();
+
 
       if (rows.length == 0) {
+        conn.release();
         return false;
       } else {
-        return true;
+        let hash = rows[0].wachtwoord;
+        let result = await bcrypt.compare(password, hash);
+        conn.release();
+        return result;
       }
 
     } catch (err) {
@@ -70,9 +76,12 @@ class Accounts {
       );
 
       if (account.length == 0) {
+
+        let hash = await bcrypt.hash(password, saltRounds);
+
         await conn.query(
           "INSERT INTO accounts (username, wachtwoord, geboortedatum) VALUES (?, ?, ?)",
-          [username, password, geboortedatum]
+          [username, hash, geboortedatum]
         );
         conn.release();
         return true;
