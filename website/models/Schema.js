@@ -14,7 +14,11 @@ var schema = buildSchema(`
         accounts: String,
         account(username: String): AccountType
         login(username: String, password: String): Boolean
-    }        
+    }
+
+    type Mutation {
+        createAccount(username: String, password: String, geboortedatum: String): Boolean
+    }    
 `);
 
 module.exports = schema;

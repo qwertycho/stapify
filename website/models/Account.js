@@ -1,3 +1,6 @@
+const pool = require("../models/Database");
+const AccountDetails = require("../models/AccountDetails");
+
 class Accounts {
   constructor(pool) {
     this.pool = pool;
@@ -10,6 +13,7 @@ class Accounts {
         "SELECT accountID, username FROM accounts"
       );
       conn.release();
+      console.log(rows);
       return rows;
     } catch (err) {
       throw err;
@@ -24,31 +28,63 @@ class Accounts {
         [username]
       );
       conn.release();
-      return rows;
+
+      return new AccountDetails(
+        rows[0].accountID,
+        rows[0].username,
+        rows[0].geboortedatum,
+        rows[0].aanmelddatum
+      );
+
     } catch (err) {
       throw err;
     }
   }
 
-    async login(username, password) {
-        try {
-            let conn = await this.pool.getConnection();
-            let rows = await conn.query(
-                "SELECT accountID FROM accounts WHERE username = ? AND wachtwoord = ?",
-                [username, password]
-            );
-            conn.release();
-            
-            if(rows.length == 0){
-                return false;
-            } else {
-                return true;
-            }
+  async login(username, password) {
+    try {
+      let conn = await this.pool.getConnection();
+      let rows = await conn.query(
+        "SELECT accountID FROM accounts WHERE username = ? AND wachtwoord = ?",
+        [username, password]
+      );
+      conn.release();
 
-        } catch (err) {
-            throw err;
-        }
+      if (rows.length == 0) {
+        return false;
+      } else {
+        return true;
+      }
+
+    } catch (err) {
+      throw err;
     }
+  }
+
+  async createAccount(username, password, geboortedatum) {
+    try {
+      let conn = await this.pool.getConnection();
+      let account = await conn.query(
+        "SELECT accountID FROM accounts WHERE username = ?",
+        [username]
+      );
+
+      if (account.length == 0) {
+        await conn.query(
+          "INSERT INTO accounts (username, wachtwoord, geboortedatum) VALUES (?, ?, ?)",
+          [username, password, geboortedatum]
+        );
+        conn.release();
+        return true;
+      } else {
+        conn.release();
+        return false;
+      }
+
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 module.exports = Accounts;

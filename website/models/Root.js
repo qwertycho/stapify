@@ -1,9 +1,14 @@
 var { graphqlHTTP } = require("express-graphql");
 var { buildSchema } = require("graphql");
 
+const AccountModel = require("../models/Account");
+const pool = require("./Database");
+const Account = new AccountModel(pool);
+
 var root = {
   accounts: async () => {
-    let accounts = await AccountModel.getAccounts();
+    let accounts = await Account.getAccounts();
+    console.log(accounts);
     return accounts[0].username;
   },
   account: async ({ username }) => {
@@ -12,6 +17,9 @@ var root = {
   },
     login: async ({ username, password }) => {
         return await Account.login(username, password);
+    },
+    createAccount: async ({ username, password, geboortedatum }) => {
+        return await Account.createAccount(username, password, geboortedatum);
     }
 };
 

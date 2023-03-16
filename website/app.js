@@ -8,14 +8,11 @@ const AccountController = require("./controllers/Account");
 var { graphqlHTTP } = require("express-graphql");
 var { buildSchema } = require("graphql");
 
-
 // Load environment variables
 dotenv.config();
 
 const port = process.env.PORT || 3000;
-const pool = require("./models/Database");
-
-Account = new AccountController(pool);
+let pool = require("./models/Database");
 
 // routers
 const IndexRouter = require("./routes/Index");
@@ -35,7 +32,7 @@ pool
 // Construct a schema, using GraphQL schema language
 var schema = require("./models/Schema");
 
-// The root provides a resolver function for each API endpoint
+// // The root provides a resolver function for each API endpoint
 var root = require("./models/Root");
 
 app.use(
