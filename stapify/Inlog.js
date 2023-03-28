@@ -7,38 +7,44 @@ const Inlog = ({ navigation }) => {
     const [formUsername, setFormUsername] = useState("Enter username");
     const [formPassword, setFormPassword] = useState("Enter password");
 
+    const submit = () => {
+        if (!formUsername || !formPassword) {
+            Alert.alert("Please enter username and password!");
+        }else if (formUsername == "Enter username" || formPassword == "Enter password") {
+            Alert.alert("Invalid username or password!");
+        }else{
+            Alert.alert(`You are logged in ${formUsername}!`);
+            navigation.navigate("Home");
+        }
+    }
+
     return (
-        <View style={Styles.inlogContainer}>
-            <Text style={Styles.inputLabel}>Username:</Text>
+        <View style={Styles.form}>
+            <Text style={Styles.label}>
+                Username:
+            </Text>
             <TextInput
-                style={ Styles.inputField }
-                onChangeText={text => setFormUsername(text)}
+                style={Styles.textInput}
+                onChangeText={usename => setFormUsername(usename)}
                 value={formUsername}
+                autoCapitalize="none"
+                selectTextOnFocus={true}
             />
-            <Text style={Styles.inputLabel}>Password:</Text>
+            <Text style={Styles.label}>
+                Password:
+            </Text>
             <TextInput
-                style={ Styles.inputField }
-                onChangeText={text => setFormPassword(text)}
+                style={Styles.textInput}
+                onChangeText={password => setFormPassword(password)}
                 value={formPassword}
+                autoCapitalize="none"
+                selectTextOnFocus={true}
+                secureTextEntry={true}
             />
-            <Button	
-                title="Inloggen"
-                onPress={() => {
-                    if (formUsername === "admin" && formPassword === "admin") {
-                        navigation.navigate("Verwerk");
-                    } else {
-                        Alert.alert("Verkeerde gebruikersnaam of wachtwoord");
-                    }
-                }}
-            />
-            <Button	
-                title="Registreren"
-                onPress={() => {
-                    navigation.navigate("Verwerk");
-                }}
-                style={{
-                    marginTop: 20
-                }}
+            <Button 
+                title="Login"
+                onPress={submit}
+                color="#708090"
             />
         </View>
     );
@@ -46,36 +52,28 @@ const Inlog = ({ navigation }) => {
 }
 
 const Styles = StyleSheet.create({
-    inlogContainer: {
-        flex: 1,
-        justifyContent: "center",
+    form: {
         alignItems: "center",
+        flexDirection: "column",
+        padding: 20,
+        backgroundColor: "#fff",
+        height: "100%",
+        
     },
-    inputLabel: {
-        fontSize: 20,
-        textAlign: "center",
-        marginTop: 10,
-        marginBottom: 10,
-        width: 200
-    },
-    inputField: {
-        height: 40, 
-        borderColor: "black",
+    textInput: {
         borderWidth: 1,
-        opacity: 0.5,
-        fontStyle: "italic",
-        width: 200,
-        padding: 10,
-        marginBottom: 20
+        width: "80%",
+        paddingBottom: 15,
+        paddingTop: 15,
+        paddingLeft: 10,
+        paddingRight: 10,
+        marginBottom: 15,
+        borderRadius: 5,
+        borderColor: "#708090"
     },
-    Button: {
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-        marginRight: 10,
-        marginLeft: 10,
-    },
-    ButtonText: {
-        fontSize: 20
+    label: {
+        paddingTop: 15,
+        paddingBottom: 5,
     }
 });
 

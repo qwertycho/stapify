@@ -37,7 +37,8 @@ const App = () => {
                         name="Verwerk"
                         component={Verwerk}
                         ptions={{
-                            headerTitleAlign: 'center'
+                            headerTitleAlign: 'center',
+                            headerTitle: 'Gegevens'
                         }}
                     >
                     </Stack.Screen>
