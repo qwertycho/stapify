@@ -7,8 +7,9 @@ const Verwerk = () => {
 
     //Ontvangt de data van de inlog pagina in een array
     const getData = (route) => {
-
-       
+        // !!!!!!!!!!!!!!!!
+        // https://www.apollographql.com/docs/react/integrations/react-native/
+        // !!!!!!!!!!!!!!!!
     };
 
     
