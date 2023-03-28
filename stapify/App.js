@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 //Components
 import Home from './Home';
 import Verwerk from './Verwerk';
+import Inlog from './Inlog';
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,10 @@ const App = () => {
                 <Stack.Navigator
                     //default screen is home
                     initialRouteName="Home"
-                    headerMode="screen"
+                    //Zorgt ervoor dat er geen header is op default pagina
+                   options={{
+                        headerMode: 'false'
+                    }}
                 >
                     <Stack.Screen
                         name="Home"
@@ -32,6 +36,15 @@ const App = () => {
                     <Stack.Screen
                         name="Verwerk"
                         component={Verwerk}
+                        ptions={{
+                            headerTitleAlign: 'center',
+                            headerTitle: 'Gegevens'
+                        }}
+                    >
+                    </Stack.Screen>
+                    <Stack.Screen
+                        name="Inlog"
+                        component={Inlog}
                         options={{
                             headerTitleAlign: 'center'
                         }}

@@ -15,6 +15,12 @@ const Menu = () => {
             >
                 <Text style={Styles.ButtonText}>Verwerk</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+            onPress={() => navigation.navigate('Inlog')}
+            style={Styles.Button}
+            >
+                <Text style={Styles.ButtonText}>Inlog</Text>
+            </TouchableOpacity>
         </View>
     );
 };

@@ -1,35 +1,25 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 
-//test data is een array met objecten, maar moet natuurlijk worden vervangen door de data uit de database
-//deze data is voor nu alleen voor het testen van de app en deze pagina moet dus ook worden aangepast zodat de data uit de database komt
-import testData from "./testData";
+//Ontvangt de data van de inlog pagina
 
 const Verwerk = () => {
 
-    const verwerkItem = ({ item }) => {
+    //Ontvangt de data van de inlog pagina in een array
+    const getData = (route) => {
+        // !!!!!!!!!!!!!!!!
+        // https://www.apollographql.com/docs/react/integrations/react-native/
+        // !!!!!!!!!!!!!!!!
+    };
+
+    
+    const verwerkItem = () => {
 
         return (
             <View style={Styles.Verwerk}>
-                <Text style={Styles.VerwerkNaam}>
-                Naam: {item.name}
-                </Text>
-                <Text style={Styles.VerwerkLeeftijd}>
-                Leeftijd: {item.age}
-                </Text>
-                <Text style={Styles.VerwerkGelacht}>
-                Gelacht: {item.gender}
-                </Text>
-                <Text 
-                style={Styles.VerwerkOmschrijving}
-                numberOfLines={3}
-                ellipsizeMode="tail"
-                >
-                    {item.omschrijving}
-                </Text>
-                <Text style={Styles.VerwerkButton}>
-                    Meer
-                </Text>
+                <Text style={Styles.verwerkItem}>Gebruikersnaam: {getData.username}</Text>
+                <Text style={Styles.verwerkItem}>Geboortedatum: {getData.birthdate}</Text>
+                <Text style={Styles.verwerkItem}>Wachtwoord: {getData.password}</Text>
             </View>
         );
     };
@@ -37,9 +27,9 @@ const Verwerk = () => {
     return (
         <View style={Styles.container}>
             <FlatList 
-                data={testData}
+                data={getData}
                 renderItem={verwerkItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={item => item.id}
             />
         </View>
     );
@@ -53,23 +43,10 @@ const Styles = StyleSheet.create({
     Verwerk: {
         flexDirection: 'column'
     },
-    VerwerkNaam: {
+    verwerkItem: {
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center'
-    },
-    VerwerkLeeftijd: {
-        fontSize: 15,
-        textAlign: 'center'
-    },
-    VerwerkGelacht: {
-        fontSize: 15,
-        textAlign: 'center'
-    },
-    VerwerkOmschrijving: {
-        fontSize: 15,
-        textAlign: 'center',
-        padding: 10
     },
     VerwerkButton: {
         fontSize: 15,
