@@ -11,9 +11,18 @@ import Inlog from './Inlog';
 
 const Stack = createStackNavigator();
 
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+
+// Initialize Apollo Client
+const client = new ApolloClient({
+    uri: 'https://schoolmoettestdomeinenhebben.nl/graphql',
+    cache: new InMemoryCache()
+  });
+
 const App = () => {
     return (
-        <>
+        <ApolloProvider client={client}>
             <StatusBar barStyle="dark-content" hidden />
             <NavigationContainer>
                 <Stack.Navigator
@@ -52,7 +61,7 @@ const App = () => {
                     </Stack.Screen>
                 </Stack.Navigator>
             </NavigationContainer>
-        </>
+        </ApolloProvider>
     );
 };
 

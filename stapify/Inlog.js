@@ -1,8 +1,33 @@
 import React, { useState } from "react";
 import { Button, Text, TextInput, View, StyleSheet, Alert } from "react-native";
 
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+
+import { useQuery } from "@apollo/client";
+
+import { accounts_query, account_query, Inlog_query } from "./query";
 
 const Inlog = ({ navigation }) => {
+
+    let queryName = "null";
+
+    const { loading, error, data } = useQuery(Inlog_query, {
+        variables : {
+            username: "remco",
+            password: "remstar"
+        }
+    });
+
+    if (loading) queryName = "loading";
+
+    if (error) queryName = "error";
+
+    if(error) console.log(error);
+
+    if (data) queryName = data.login;
+
+    console.log(data);
 
     const [formUsername, setFormUsername] = useState("Enter username");
     const [formPassword, setFormPassword] = useState("Enter password");
@@ -20,6 +45,9 @@ const Inlog = ({ navigation }) => {
 
     return (
         <View style={Styles.form}>
+            <Text>
+                {queryName}
+            </Text>
             <Text style={Styles.label}>
                 Username:
             </Text>
