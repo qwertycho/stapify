@@ -1,19 +1,27 @@
 import React, { useState } from "react";
 import { Button, Text, TextInput, View, StyleSheet, Alert } from "react-native";
+import DatePicker from 'react-native-date-picker'
 
 
 const Inlog = ({ navigation }) => {
 
+    // Dit kan je zien als variabelen die je kan aanpassen
     const [formUsername, setFormUsername] = useState("Enter username");
+    const [formBirthdate, setDate] = useState(new Date());
     const [formPassword, setFormPassword] = useState("Enter password");
+    //boolean voor de datepicker model
+    const [open, setOpen] = useState(false)
 
     const submit = () => {
-        if (!formUsername || !formPassword) {
-            Alert.alert("Please enter username and password!");
-        }else if (formUsername == "Enter username" || formPassword == "Enter password") {
-            Alert.alert("Invalid username or password!");
-        }else{
-            Alert.alert(`You are logged in ${formUsername}!`);
+        if (!formUsername || !formPassword || !formBirthdate) {
+            Alert.alert("Some fields are empty, Please try again!");
+        }
+        // als de useState niet is aangepast, geef error
+        else if (formUsername == "Enter username" || formPassword == "Enter password") {
+            Alert.alert("Invalid username, birthdate or password, Please try again!");
+        }
+        else {
+            Alert.alert("Welcome " + formUsername + "!");
             navigation.navigate("Home");
         }
     }
@@ -31,6 +39,23 @@ const Inlog = ({ navigation }) => {
                 selectTextOnFocus={true}
             />
             <Text style={Styles.label}>
+                Geboortedatum:
+            </Text>
+            <Button title="Pick date" onPress={() => setOpen(true)} />
+            <DatePicker
+                modal
+                mode="date"
+                open={open}
+                date={formBirthdate}
+                onConfirm={(formBirthdate) => {
+                    setOpen(false)
+                    setDate(formBirthdate)
+                }}
+                onCancel={() => {
+                    setOpen(false)
+                }}
+            />
+            <Text style={Styles.label}>
                 Password:
             </Text>
             <TextInput
@@ -41,7 +66,7 @@ const Inlog = ({ navigation }) => {
                 selectTextOnFocus={true}
                 secureTextEntry={true}
             />
-            <Button 
+            <Button
                 title="Login"
                 onPress={submit}
                 color="#708090"
@@ -58,7 +83,7 @@ const Styles = StyleSheet.create({
         padding: 20,
         backgroundColor: "#fff",
         height: "100%",
-        
+
     },
     textInput: {
         borderWidth: 1,
