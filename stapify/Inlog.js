@@ -19,15 +19,34 @@ const Inlog = ({ navigation }) => {
         // als de useState niet is aangepast, geef error
         else if (formUsername == "Enter username" || formPassword == "Enter password") {
             Alert.alert("Invalid username, birthdate or password, Please try again!");
-        }
-        else {
-            Alert.alert("Welcome " + formUsername + "!");
+        }else if (formBirthdate > new Date()) {
+            Alert.alert("Invalid birthdate, Please try again!");
+        }else if (formPassword.length < 8) {
+            Alert.alert("Password must be at least 8 characters long, Please try again!");
+        }else if (formPassword == formUsername) {
+            Alert.alert("Password can not be the same as username, Please try again!");
+        }else if (formPassword.toLowerCase() == formPassword) {
+            Alert.alert("Password must contain at least 1 uppercase character, Please try again!");
+        }else if (formPassword.toUpperCase() == formPassword) {
+            Alert.alert("Password must contain at least 1 lowercase character, Please try again!");
+        }else if (formPassword.search(/[0-9]/) < 0) {
+            Alert.alert("Password must contain at least 1 number, Please try again!");
+        }else if (formPassword.search(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/) < 0) {
+            Alert.alert("Password must contain at least 1 special character, Please try again!");
+        }else {
+            Alert.alert("Welldone " + formUsername + "!");
             navigation.navigate("Home");
         }
     }
 
     return (
         <View style={Styles.form}>
+            <Text style={{ fontSize: 30, marginBottom: 20 }}>
+                Login
+            </Text>
+            <Text style={{ fontSize: 15, marginBottom: 20 }}>
+                password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character
+            </Text>
             <Text style={Styles.label}>
                 Username:
             </Text>
