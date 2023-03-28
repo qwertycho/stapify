@@ -8,30 +8,11 @@ class Accounts {
     this.pool = pool;
   }
 
-  async createCookie(username) {
-    try {
-      let conn = await this.pool.getConnection();
-
-        let token = await bcrypt.hash(username, saltRounds);
-
-        let expire = new Date();
-        expire.setDate(expire.getDate() + 1);
-        await conn.query("INSERT INTO cookies (username, token, date) VALUES (?, ?, ?)", [username, token, expire]);
-
-        conn.release();
-
-        return token;
-
-    } catch (err) {
-      throw err;
-    }
-  }
-
   async getAccounts() {
     try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
-        "SELECT accountID, username, aanmelddatum FROM accounts"
+        "SELECT accountID, username FROM accounts"
       );
       conn.release();
       console.log(rows);
@@ -78,7 +59,7 @@ class Accounts {
         let hash = rows[0].wachtwoord;
         let result = await bcrypt.compare(password, hash);
         conn.release();
-        return true;
+        return result;
       }
 
     } catch (err) {
