@@ -10,14 +10,20 @@ var schema = buildSchema(`
         aanmelddatum: String
     }
 
+    type responseType {
+        code: Int,
+        message: String
+    }
+
     type Query {
-        accounts: String,
+        accounts: [AccountType]
         account(username: String): AccountType
-        login(username: String, password: String): Boolean
+        login(username: String, password: String): String
     }
 
     type Mutation {
-        createAccount(username: String, password: String, geboortedatum: String): Boolean
+        createAccount(username: String, password: String, geboortedatum: String): String
+        stappen(aantalStappen: Int, cookie: String): responseType
     }    
 `);
 
