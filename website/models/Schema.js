@@ -11,9 +11,9 @@ var schema = buildSchema(`
     }
 
     type Query {
-        accounts: String,
+        accounts: [AccountType]
         account(username: String): AccountType
-        login(username: String, password: String): Boolean
+        login(username: String, password: String) : String
     }
 
     type Mutation {
