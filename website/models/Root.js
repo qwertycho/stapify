@@ -9,7 +9,7 @@ var root = {
   accounts: async () => {
     let accounts = await Account.getAccounts();
     console.log(accounts);
-    return accounts[0].username;
+    return accounts;
   },
   account: async ({ username }) => {
 

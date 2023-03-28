@@ -58,8 +58,17 @@ class Accounts {
       } else {
         let hash = rows[0].wachtwoord;
         let result = await bcrypt.compare(password, hash);
-        conn.release();
-        return result;
+
+        let token = await bcrypt.hash(username, saltRounds);
+
+        let expires = new Date();
+        expires.setHours(expires.getHours() + 1);
+
+        await conn.query(
+          "INSERT INTO cookies (token, date, username) VALUES (?, ?, ?)", [token, expires, username]
+        );
+
+        return token;
       }
 
     } catch (err) {
