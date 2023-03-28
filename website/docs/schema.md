@@ -51,3 +51,43 @@ reactie van de server:
     "createAccount": false
   }
 }
+
+## Types
+
+### responeType
+    type responeType {
+        status: String,
+        message: String
+    }
+
+### Account aanmaken
+      createAccount(
+        username: String, 
+        password: String, 
+        geboortedatum: String
+      )
+      returns: String cookie
+
+### Login
+      login(
+        username: String, 
+        password: String
+        ) 
+      returns: String cookie
+
+### Account opvragen
+      account(
+        username: String
+        ) 
+      returns: AccountType
+
+### Alle accounts opvragen
+      accounts 
+      returns: [AccountType]
+
+### stappen toevoegen
+    stappen(
+      aantalStappen: Int,
+      cookie: String
+    )
+    returns: responeType
