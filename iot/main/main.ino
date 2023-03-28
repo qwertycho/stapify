@@ -1,14 +1,22 @@
-#include "logger.h"
+#include "leds.h"
+#include "Tijd.h"
 
-// een nieuwe instance van de class Logger krijgen
-Logger* logger = Logger::getInstance(1);
+#include "Communicatie.h"
 
-void setup(){
-    Serial.begin(9600);
+// een nieuwe instance van de class Communicatie krijgen
+// com is de instance van de class Communicatie
+Communicatie* com = Communicatie::getInstance();
+Tijd* tijd = Tijd::getInstance();
+
+void setup()
+{
+    ledSetup();
+    com->enableSerial();
 }
 
-void loop(){
-    logger->log(1, "test");
-
-    delay(1000);
+void loop()
+{
+    tijd->tick();
+    tijd->on();
+    com->sendMessage("ding","test");
 }
