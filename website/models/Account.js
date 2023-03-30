@@ -80,8 +80,6 @@ class Accounts {
 
       let bmi = new BMI.BMI(rows[0].bmi, new Date());
 
-      console.log(bmi);
-
       return bmi;
     } catch (err) {
       throw err;
@@ -100,10 +98,7 @@ class Accounts {
       );
       conn.release();
 
-      console.log(rows[0].stappen);
-
       let stappen = new AccountDetails.Stappen(rows[0].stappen, new Date());
-      console.log(stappen);
       return stappen;
     } catch (err) {
       throw err;
