@@ -15,26 +15,24 @@ const Inlog = ({ navigation }) => {
     const submit = () => {
         if (!formUsername || !formPassword || !formBirthdate) {
             Alert.alert("Some fields are empty, Please try again!");
-        }
-        // als de useState niet is aangepast, geef error
-        else if (formUsername == "Enter username" || formPassword == "Enter password") {
+        }else if (formUsername == "Enter username" || formPassword == "Enter password") {         // als de useState niet is aangepast, geef error
             Alert.alert("Invalid username, birthdate or password, Please try again!");
-        }else if (formBirthdate > new Date()) {
+        }else if (formBirthdate > new Date()) {                                                   // als de geboortedatum in de toekomst ligt, geef error
             Alert.alert("Invalid birthdate, Please try again!");
-        }else if (formPassword.length < 8) {
+        }else if (formPassword.length < 8) {                                                      //als password korter is dan 8 karakters, geef error
             Alert.alert("Password must be at least 8 characters long, Please try again!");
-        }else if (formPassword == formUsername) {
+        }else if (formPassword == formUsername) {                                                 //als password hetzelfde is als de username, geef error
             Alert.alert("Password can not be the same as username, Please try again!");
-        }else if (formPassword.toLowerCase() == formPassword) {
+        }else if (formPassword.toLowerCase() == formPassword) {                                   //als password geen hoofdletters bevat, geef error
             Alert.alert("Password must contain at least 1 uppercase character, Please try again!");
-        }else if (formPassword.toUpperCase() == formPassword) {
+        }else if (formPassword.toUpperCase() == formPassword) {                                   //als password geen kleine letters bevat, geef error
             Alert.alert("Password must contain at least 1 lowercase character, Please try again!");
-        }else if (formPassword.search(/[0-9]/) < 0) {
+        }else if (formPassword.search(/[0-9]/) < 0) {                                              //als password geen nummers bevat, geef error
             Alert.alert("Password must contain at least 1 number, Please try again!");
-        }else if (formPassword.search(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/) < 0) {
+        }else if (formPassword.search(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/) < 0) {              //als password geen speciale karakters bevat, geef error
             Alert.alert("Password must contain at least 1 special character, Please try again!");
-        }else {
-            Alert.alert("Welldone " + formUsername + "!");
+        }else {                                                                                    //als alles goed is, geef succesmelding
+            Alert.alert("Login succesfull, welcom " + formUsername + "!");      
             navigation.navigate("Home");
         }
     }
@@ -44,9 +42,7 @@ const Inlog = ({ navigation }) => {
             <Text style={{ fontSize: 30, marginBottom: 20 }}>
                 Login
             </Text>
-            <Text style={{ fontSize: 15, marginBottom: 20 }}>
-                password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character
-            </Text>
+           
             <Text style={Styles.label}>
                 Username:
             </Text>
@@ -76,6 +72,9 @@ const Inlog = ({ navigation }) => {
             />
             <Text style={Styles.label}>
                 Password:
+            </Text>
+            <Text style={{ fontSize: 15, marginBottom: 20 }}>
+                password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character
             </Text>
             <TextInput
                 style={Styles.textInput}
@@ -116,8 +115,8 @@ const Styles = StyleSheet.create({
         borderColor: "#708090"
     },
     label: {
-        paddingTop: 15,
-        paddingBottom: 5,
+        paddingTop: 25,
+        paddingBottom: 10,
     }
 });
 
