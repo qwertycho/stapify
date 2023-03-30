@@ -20,6 +20,12 @@ var root = {
   createAccount: async ({ username, password, geboortedatum }) => {
     return await Account.createAccount(username, password, geboortedatum);
   },
+
+
+  myAccount: async ({ cookie }) => {
+    return await Account.getMyAccount(cookie);
+  },
+
   stappen: async ({aantalStappen, cookie }) => {
     try{
       let succes = await Sensor.insertStappen(aantalStappen, cookie);
@@ -32,6 +38,19 @@ var root = {
       return {code: 500, message: err};
     }
   },
+
+  bmi: async ({bmi, cookie }) => {
+    try{
+      let succes = await Sensor.insertBMI(bmi, cookie);
+      if(succes){
+        return {code: 200, message: "BMI toegevoegd"};
+      }else{
+        return {code: 500, message: "Inlog fout"};
+      }
+    }catch(err){
+      return {code: 500, message: err};
+    }
+  }
 };
 
 module.exports = root;

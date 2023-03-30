@@ -7,4 +7,22 @@ class accountDetails{
         }
 }
 
-module.exports = accountDetails;
+class BMI {
+    constructor(bmi, tijd){
+        this.bmi = bmi;
+        this.tijd = tijd;
+    }
+}
+
+class Stappen {
+    constructor(aantalStappen, tijd){
+        this.aantalStappen = aantalStappen;
+        this.tijd = tijd;
+    }
+}
+
+module.exports = {
+    accountDetails,
+    BMI,
+    Stappen
+}

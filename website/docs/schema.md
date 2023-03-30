@@ -91,3 +91,11 @@ reactie van de server:
       cookie: String
     )
     returns: responeType
+
+### bmi toevoegen
+    bmi(
+      bmi: Float,
+      cookie: String
+    )
+    returns: responeType
+
