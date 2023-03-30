@@ -82,6 +82,27 @@ class Sensor {
       return false;
     }
   }
+
+  async insertBMI(bmi, cookie) {
+    let accountID = await this.checkCookie(cookie);
+    if (accountID) {
+      try {
+        let conn = await this.pool.getConnection();
+        let rows = await conn.query(
+          "INSERT INTO bmi (waarde, accountID) VALUES (?, ?)",
+          [bmi, accountID]
+        );
+
+        conn.release();
+
+        return true;
+      } catch (err) {
+        throw err;
+      }
+    } else {
+      return false;
+    }
+  }
 }
 
 module.exports = Sensor;

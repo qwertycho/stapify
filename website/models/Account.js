@@ -1,11 +1,37 @@
 const pool = require("../models/Database");
 const AccountDetails = require("../models/AccountDetails");
 const bcrypt = require("bcrypt");
+const myAccount = require("../models/MyAccount");
+const BMI = require("../models/AccountDetails");
 const saltRounds = 2;
+
+
+const SchemaModel = require("../models/SchemaModel");
 
 class Accounts {
   constructor(pool) {
     this.pool = pool;
+    this.SchemaModel = new SchemaModel(pool);
+  }
+
+
+  async checkCookie(cookie) {
+    try {
+      let conn = await this.pool.getConnection();
+      let rows = await conn.query(
+        "SELECT accountID FROM cookies WHERE token = ? AND date > NOW()",
+        [cookie]
+      );
+      conn.release();
+
+      if (rows.length > 0) {
+        return rows[0].accountID;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      throw err;
+    }
   }
 
   async getAccounts() {
@@ -39,6 +65,83 @@ class Accounts {
       );
     } catch (err) {
       throw err;
+    }
+  }
+
+  async getbmi(id) {
+    try {
+      let conn = await this.pool.getConnection();
+      let rows = await conn.query(
+        "SELECT waarde AS bmi, dateTime as tijd FROM bmi WHERE accountID = ? ORDER BY dateTime DESC LIMIT 1",
+        [id]
+      );
+
+      conn.release();
+
+      let bmi = new BMI.BMI(rows[0].bmi, new Date());
+
+      console.log(bmi);
+
+      return bmi;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getStappen(id) {
+    try {
+      let conn = await this.pool.getConnection();
+      // tel alle stappen op van de huidige dag 
+      let rows = await conn.query(`SELECT SUM(waarde) AS stappen
+        FROM stappen
+        WHERE accountID = ? 
+        AND dateTime BETWEEN CURDATE() AND CURDATE() + INTERVAL 1 DAY`,
+        [id]
+      );
+      conn.release();
+
+      console.log(rows[0].stappen);
+
+      let stappen = new AccountDetails.Stappen(rows[0].stappen, new Date());
+      console.log(stappen);
+      return stappen;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getMyAccount(cookie) {
+    let accountID = await this.checkCookie(cookie);
+    if (accountID) {
+      try {
+        let conn = await this.pool.getConnection();
+        let rows = await conn.query(
+          "SELECT * FROM accounts WHERE accountID = ?",
+          [accountID]
+        );
+        conn.release();
+        let bmi = await this.getbmi(accountID);
+        let stappen = await this.getStappen(accountID);
+        let sportSchema = await this.SchemaModel.getSchema(accountID);
+        let account = rows[0];
+
+        let MA = new myAccount(
+          accountID, 
+          account.username, 
+          account.geboorteDatum, 
+          account.aanmeldDatum,
+          stappen,
+          bmi,
+          sportSchema
+          );
+
+        return MA;
+
+      } catch (err) {
+        throw err;
+      }
+    } else {
+      return false;
     }
   }
 
@@ -78,15 +181,15 @@ class Accounts {
     }
   }
 
-/**
- * 
- * @param {*} username 
- * @param {*} password 
- * @returns String cookie
- * @returns FALSE if username doesn't exist
- * @returns ERROR if something went wrong
- * Login functie die een cookie genereert en opslaat in de database
- */
+  /**
+   *
+   * @param {*} username
+   * @param {*} password
+   * @returns String cookie
+   * @returns FALSE if username doesn't exist
+   * @returns ERROR if something went wrong
+   * Login functie die een cookie genereert en opslaat in de database
+   */
   async login(username, password) {
     try {
       let conn = await this.pool.getConnection();
@@ -110,8 +213,7 @@ class Accounts {
   }
 
   async createAccount(username, password, geboortedatum) {
-
-    if(username == "" || password == "" || geboortedatum == "") return false;
+    if (username == "" || password == "" || geboortedatum == "") return false;
 
     try {
       let conn = await this.pool.getConnection();
@@ -137,6 +239,19 @@ class Accounts {
       throw err;
     }
   }
+
+  async getSportSchema(cookie){
+    let accountID = await this.checkCookie(cookie);
+    if (accountID) {
+      try {
+        return await SchemaModel.getSportSchema(accountID);
+      } catch (err) {
+        throw err;
+      }
+    }
+  }
+
+
 }
 
 module.exports = Accounts;
