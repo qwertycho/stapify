@@ -18,7 +18,9 @@
         aanmelddatum: String,
         stappen: StappenType,
         bmi: BMIType,
-        sportSchema: sportSType
+        hartslag: hartslagType,
+        sportSchema: sportSType,
+        eetSchema: eetSType
     }
 
     type StappenType {
@@ -102,5 +104,43 @@ reactie van de server:
         "zondag": 7
       }
     }
+  }
+}
+
+## ranges
+het is mogelijk om een range op te vragen van de stappen
+
+
+### query voor een range
+stapRange(cookie: String, start: String, end: String): [StappenType]
+
+### voorbeeld
+
+query:
+
+{
+  stapRange(cookie: "tanterlange string", start: "2020-01-01", end: "2020-01-31"){
+    aantalStappen,
+    tijd
+  }
+}
+
+range van de stappen van januari 2020
+
+reactie van de server:
+
+{
+  "data": {
+    "stapRange": [
+      {
+        "aantalStappen": 5994,
+        "tijd": "2020-01-01"
+      },
+      {
+        "aantalStappen": 5994,
+        "tijd": "2020-01-02"
+      },
+      etc
+    ]
   }
 }
