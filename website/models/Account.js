@@ -5,7 +5,6 @@ const myAccount = require("../models/MyAccount");
 const BMI = require("../models/AccountDetails");
 const saltRounds = 2;
 
-
 const SchemaModel = require("../models/SchemaModel");
 
 class Accounts {
@@ -14,7 +13,6 @@ class Accounts {
     this.SchemaModel = new SchemaModel(pool);
   }
 
-
   async checkCookie(cookie) {
     try {
       let conn = await this.pool.getConnection();
@@ -22,6 +20,7 @@ class Accounts {
         "SELECT accountID FROM cookies WHERE token = ? AND date > NOW()",
         [cookie]
       );
+
       conn.release();
 
       if (rows.length > 0) {
@@ -105,6 +104,24 @@ class Accounts {
     }
   }
 
+  async getHartslag(id) {
+    try {
+      let conn = await this.pool.getConnection();
+      let rows = await conn.query(
+        "SELECT waarde AS hartslag, dateTime as tijd FROM hartslagen WHERE accountID = ? ORDER BY dateTime DESC LIMIT 1",
+        [id]
+      );
+
+      conn.release();
+
+      let hartslag = new AccountDetails.Hartslag(rows[0].hartslag, new Date());
+
+      return hartslag;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async getMyAccount(cookie) {
     let accountID = await this.checkCookie(cookie);
     if (accountID) {
@@ -119,6 +136,8 @@ class Accounts {
         let stappen = await this.getStappen(accountID);
         let sportSchema = await this.SchemaModel.getSchema(accountID);
         let account = rows[0];
+        let eetSchema = await this.SchemaModel.getEetSchema(accountID);
+        let hartslag = await this.getHartslag(accountID);
 
         let MA = new myAccount(
           accountID, 
@@ -127,7 +146,9 @@ class Accounts {
           account.aanmeldDatum,
           stappen,
           bmi,
-          sportSchema
+          sportSchema,
+          eetSchema,
+          hartslag
           );
 
         return MA;
@@ -235,16 +256,41 @@ class Accounts {
     }
   }
 
-  async getSportSchema(cookie){
-    let accountID = await this.checkCookie(cookie);
-    if (accountID) {
-      try {
-        return await SchemaModel.getSportSchema(accountID);
-      } catch (err) {
-        throw err;
+/**
+ * @param {cookie, sportSchema}
+ * @returns {boolean}
+ * @returns {error}
+ * voegt het sportschema toe aan de database of update degene die al bestaatd gebaseerd op de cookie
+ * sportSChema is een object met maandag t/m zondag en elke dag is een int FK naar sporten
+ */
+  async insertSportSchema(cookie, sportSchema) {
+    try{
+      let accountID = await this.checkCookie(cookie);
+      console.log(sportSchema);
+      if (accountID) {
+        return await this.SchemaModel.insertSchema(accountID, sportSchema);
+      } else {
+        return false;
       }
+    } catch (err) {
+      throw err;
     }
   }
+
+  async insertEetSchema(cookie, eetSchema) {
+    try{
+      let accountID = await this.checkCookie(cookie);
+      console.log(eetSchema);
+      if (accountID) {
+        return await this.SchemaModel.insertEetSchema(accountID, eetSchema);
+      } else {
+        return false;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
 
 
 }

@@ -2,6 +2,7 @@ const pool = require("../models/Database");
 const responseType = require("../models/ResponseDetails");
 const bcrypt = require("bcrypt");
 const saltRounds = 2;
+const MA = require("../models/AccountDetails");
 
 class Sensor {
   constructor(pool) {
@@ -103,6 +104,86 @@ class Sensor {
       return false;
     }
   }
+
+  async insertHartslag(hartslag, cookie) {
+    let accountID = await this.checkCookie(cookie);
+    if (accountID) {
+      try {
+        let conn = await this.pool.getConnection();
+        let dateTime = this.getCurrentTime();
+        let rows = await conn.query(
+          "INSERT INTO hartslagen (waarde, accountID, dateTime) VALUES (?, ?, ?)",
+          [hartslag, accountID, dateTime]
+        );
+
+        conn.release();
+
+        return true;
+      } catch (err) {
+        throw err;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  async getSport(sportID){
+    try {
+      let conn = await this.pool.getConnection();
+      let rows = await conn.query(
+        "SELECT sport FROM sporten WHERE sportID = ?",
+        [sportID]
+      );
+
+      conn.release();
+
+      return rows[0].sport;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+/**
+ * 
+ * @param {*} startDate als string (yyyy-mm-dd)
+ * @param {*} endDate als string (yyyy-mm-dd)
+ * @param {*} cookie 
+ * @returns array met stap objecten
+ * @brief Vraag mij niet waarom dit niet werkt met een iso string
+ */
+  async getStapRange(startDate, endDate, cookie) {
+    let accountID = await this.checkCookie(cookie);
+    if (accountID) {
+      try {
+
+        let conn = await this.pool.getConnection();
+        let rows = await conn.query(
+          "SELECT dateTime, waarde FROM stappen WHERE dateTime BETWEEN ? AND ? AND accountID = ?",
+          [startDate, endDate, accountID]
+        );
+
+        conn.release();
+
+        let ray = [];
+
+        for (let i = 0; i < rows.length; i++) {
+          let obj = {
+            tijd: rows[i].dateTime,
+            aantalStappen: rows[i].waarde,
+          };
+          ray.push(obj);
+        }
+
+        return ray;
+
+      } catch (err) {
+        throw err;
+      }
+    } else {
+      return false;
+    }
+  }
+
 }
 
 module.exports = Sensor;

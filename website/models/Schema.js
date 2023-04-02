@@ -3,6 +3,26 @@ var { buildSchema } = require("graphql");
 
 var schema = buildSchema(`
 
+    input sportSchemaInput {
+        maandag: Int,
+        dinsdag: Int,
+        woensdag: Int,
+        donderdag: Int,
+        vrijdag: Int,
+        zaterdag: Int,
+        zondag: Int
+    }
+
+    input eetSchemaInput {
+        maandag: String,
+        dinsdag: String,
+        woensdag: String,
+        donderdag: String,
+        vrijdag: String,
+        zaterdag: String,
+        zondag: String
+    }
+
     type StappenType {
         aantalStappen: Int,
         tijd: String
@@ -10,6 +30,11 @@ var schema = buildSchema(`
 
     type BMIType {
         bmi: Float,
+        tijd: String
+    }
+
+    type hartslagType {
+        hartslag: Int,
         tijd: String
     }
 
@@ -21,6 +46,16 @@ var schema = buildSchema(`
         vrijdag: Int,
         zaterdag: Int,
         zondag: Int
+    }
+
+    type eetSType {
+        maandag: String,
+        dinsdag: String,
+        woensdag: String,
+        donderdag: String,
+        vrijdag: String,
+        zaterdag: String,
+        zondag: String
     }
 
     type AccountType {
@@ -37,7 +72,9 @@ var schema = buildSchema(`
         aanmelddatum: String,
         stappen: StappenType,
         bmi: BMIType,
-        sportSchema: sportSType
+        hartslag: hartslagType,
+        sportSchema: sportSType,
+        eetSchema: eetSType
     }
 
     type responseType {
@@ -50,13 +87,18 @@ var schema = buildSchema(`
         account(username: String): AccountType
         myAccount(cookie: String): MyAccountType
         login(username: String, password: String): String
+        sport(sportID: Int): String
+        stapRange(cookie: String, start: String, end: String): [StappenType]
     }
 
     type Mutation {
         createAccount(username: String, password: String, geboortedatum: String): String
         stappen(aantalStappen: Int, cookie: String): responseType
         bmi(bmi: Float, cookie: String): responseType
-    }    
+        hartslag(hartslag: Int, cookie: String): responseType
+        sportSchema(sportSchema: sportSchemaInput, cookie: String): responseType
+        eetSchema(eetSchema: eetSchemaInput, cookie: String): responseType
+    }
 `);
 
 module.exports = schema;

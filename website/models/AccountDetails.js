@@ -21,8 +21,16 @@ class Stappen {
     }
 }
 
+class Hartslag {
+    constructor(hartslag, tijd){
+        this.hartslag = hartslag;
+        this.tijd = tijd;
+    }
+}
+
 module.exports = {
     accountDetails,
     BMI,
-    Stappen
+    Stappen,
+    Hartslag
 }
