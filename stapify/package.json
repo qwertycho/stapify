@@ -10,12 +10,14 @@
     "test": "jest"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.11",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
     "@react-navigation/stack": "^6.3.16",
+    "graphql": "^16.6.0",
     "react": "18.2.0",
     "react-native": "0.71.3",
     "react-native-date-picker": "^4.2.10",

@@ -1,52 +1,65 @@
 import React, { useState } from "react";
 import { Button, Text, TextInput, View, StyleSheet, Alert } from "react-native";
-import DatePicker from 'react-native-date-picker'
 
+// import DatePicker from 'react-native-date-picker'
+import { useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
 
-const Inlog = ({ navigation }) => {
+export const CHECK_USER = 
+gql`
+    query {
+        accounts {
+        accountID
+        username
+        geboortedatum
+        aanmelddatum
+        } 
+    }
+`;
 
-    // Dit kan je zien als variabelen die je kan aanpassen
-    const [formUsername, setFormUsername] = useState("Enter username");
-    const [formBirthdate, setDate] = useState(new Date());
-    const [formPassword, setFormPassword] = useState("Enter password");
-    //boolean voor de datepicker model
-    const [open, setOpen] = useState(false)
+const Inlog = () => {
 
     const submit = () => {
-        if (!formUsername || !formPassword || !formBirthdate) {
+        if (!formUsername || !formPassword ) {
             Alert.alert("Some fields are empty, Please try again!");
-        }
-        // als de useState niet is aangepast, geef error
-        else if (formUsername == "Enter username" || formPassword == "Enter password") {
+        }else if (formUsername == "Enter username" || formPassword == "Enter password") {         // als de useState niet is aangepast, geef error
             Alert.alert("Invalid username, birthdate or password, Please try again!");
-        }else if (formBirthdate > new Date()) {
-            Alert.alert("Invalid birthdate, Please try again!");
-        }else if (formPassword.length < 8) {
-            Alert.alert("Password must be at least 8 characters long, Please try again!");
-        }else if (formPassword == formUsername) {
-            Alert.alert("Password can not be the same as username, Please try again!");
-        }else if (formPassword.toLowerCase() == formPassword) {
-            Alert.alert("Password must contain at least 1 uppercase character, Please try again!");
-        }else if (formPassword.toUpperCase() == formPassword) {
-            Alert.alert("Password must contain at least 1 lowercase character, Please try again!");
-        }else if (formPassword.search(/[0-9]/) < 0) {
-            Alert.alert("Password must contain at least 1 number, Please try again!");
-        }else if (formPassword.search(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/) < 0) {
-            Alert.alert("Password must contain at least 1 special character, Please try again!");
-        }else {
-            Alert.alert("Welldone " + formUsername + "!");
-            navigation.navigate("Home");
+        }else {       
+            const { loading, error, data } = useQuery(CHECK_USER);
+            if (loading) return <Text>Loading...</Text>;
+            if (error) return <Text>Error :/</Text>;
+            if (data) {
+                let found = false;
+                data.accounts.forEach(element => {
+                    if (element.username == formUsername) {
+                        found = true;
+                    }
+                });
+                if (found) {
+                    Alert.alert("Login succesfull!");
+                    navigation.navigate('Home');
+                }else {
+                    Alert.alert("Invalid username or password, Please try again!");
+                }
+            }
         }
+          
     }
+
+    
+    // Dit kan je zien als variabelen die je kan aanpassen
+    const [formUsername, setFormUsername] = useState("Enter username");
+    // const [formBirthdate, setDate] = useState(new Date());
+    const [formPassword, setFormPassword] = useState("Enter password");
+    //boolean voor de datepicker model
+    // const [open, setOpen] = useState(false)
 
     return (
         <View style={Styles.form}>
             <Text style={{ fontSize: 30, marginBottom: 20 }}>
                 Login
             </Text>
-            <Text style={{ fontSize: 15, marginBottom: 20 }}>
-                password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character
-            </Text>
+           
             <Text style={Styles.label}>
                 Username:
             </Text>
@@ -57,7 +70,9 @@ const Inlog = ({ navigation }) => {
                 autoCapitalize="none"
                 selectTextOnFocus={true}
             />
-            <Text style={Styles.label}>
+
+            {/* Geboorte datum heb je niet nodig voor inlogen, alleen voor registreren */}
+            {/* <Text style={Styles.label}>
                 Geboortedatum:
             </Text>
             <Button title="Pick date" onPress={() => setOpen(true)} />
@@ -73,9 +88,12 @@ const Inlog = ({ navigation }) => {
                 onCancel={() => {
                     setOpen(false)
                 }}
-            />
+            /> */}
             <Text style={Styles.label}>
                 Password:
+            </Text>
+            <Text style={{ fontSize: 15, marginBottom: 20 }}>
+                password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character
             </Text>
             <TextInput
                 style={Styles.textInput}
@@ -94,6 +112,9 @@ const Inlog = ({ navigation }) => {
     );
 
 }
+
+
+
 
 const Styles = StyleSheet.create({
     form: {
@@ -116,8 +137,8 @@ const Styles = StyleSheet.create({
         borderColor: "#708090"
     },
     label: {
-        paddingTop: 15,
-        paddingBottom: 5,
+        paddingTop: 25,
+        paddingBottom: 10,
     }
 });
 

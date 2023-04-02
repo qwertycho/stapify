@@ -1,9 +1,14 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Menu from './Menu';
 
 const Home =(props) => {
+
+    const navigeerSport = () => { props.navigation.navigate('Sportschema'); }
+    const navigeerEten = () => { props.navigation.navigate('Eetschema'); }
+
     return (
+        <ScrollView>
         <View style={Styles.container}>
             <Image 
                 style={Styles.stapifyLogo}
@@ -14,10 +19,25 @@ const Home =(props) => {
             <View style={Styles.textcontainer}>
                 <Text style={Styles.content}>{introText}</Text>
             </View>
+            <View>
+                <TouchableOpacity style={Styles.NavBox} onPress={navigeerSport}>
+                    <Text style={Styles.title}>Sportschema</Text>
+                    <Text style={Styles.text}>Klik om naar jouw Sportschema te gaan </Text>
+                </TouchableOpacity>
+            </View>
+            <View>
+                <TouchableOpacity style={Styles.NavBox} onPress={navigeerEten}>
+                    <Text style={Styles.title}>Eetschema</Text>
+                    <Text style={Styles.text}>Klik om naar jouw Eetschema te gaan </Text>
+                </TouchableOpacity>
+            </View>
+            <View style={Styles.ruimte}>
+            </View>
             <View style={Styles.Menu}>
                 <Menu />
             </View>
         </View>	
+        </ScrollView>
     );
 }
 
@@ -52,6 +72,22 @@ const Styles = StyleSheet.create({
     Menu: {
         position: 'absolute',
         bottom: 10
+    },
+    NavBox: {
+        backgroundColor: '#F5F5F5',
+        padding: 20,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#000000',
+        width: 300,
+        height: 100,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+        marginTop: 20
+    },
+    ruimte: {//voor de ruimte onder de menuknop, ik weet dat dit niet de beste manier is, maar ik begin er een beetje klaar mee te zijn
+        height: 100
     },
 });
 
