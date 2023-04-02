@@ -1,63 +1,63 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
+import { useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
 
-//Ontvangt de data van de inlog pagina
+//get all data from navigate function to this page
+export default function Verwerk() {
 
-const Verwerk = () => {
+    const { loading, error, data } = useQuery(GET_ALLUSERSDATA);
 
-    //Ontvangt de data van de inlog pagina in een array
-    const getData = (route) => {
-        // !!!!!!!!!!!!!!!!
-        // https://www.apollographql.com/docs/react/integrations/react-native/
-        // !!!!!!!!!!!!!!!!
-    };
-
-    
-    const verwerkItem = () => {
-
+    if (loading) return <Text>Loading...</Text>;
+    if (error) return <Text>Error :/</Text>;
+    if (data) {
         return (
-            <View style={Styles.Verwerk}>
-                <Text style={Styles.verwerkItem}>Gebruikersnaam: {getData.username}</Text>
-                <Text style={Styles.verwerkItem}>Geboortedatum: {getData.birthdate}</Text>
-                <Text style={Styles.verwerkItem}>Wachtwoord: {getData.password}</Text>
+            <View style={Styles.container}>
+                <Text style={Styles.title}>Data</Text>
+                <FlatList
+                    data={data.accounts}
+                    renderItem={({ item }) => (
+                        <Text style={Styles.item}>
+                            {item.accountID} {item.username} {item.geboortedatum} {item.aanmelddatum}
+                        </Text>
+                    )}
+                    keyExtractor={(item) => item.accountID}
+                />
             </View>
         );
-    };
-    
-    return (
-        <View style={Styles.container}>
-            <FlatList 
-                data={getData}
-                renderItem={verwerkItem}
-                keyExtractor={item => item.id}
-            />
-        </View>
-    );
+    }
 }
+
+export const GET_ALLUSERSDATA = 
+gql`
+    query{ 
+        accounts {
+            accountID
+            username
+            geboortedatum
+            aanmelddatum
+        } 
+    }
+`;
+
 
 const Styles = StyleSheet.create({
     container: {
-        paddingTop: 20,
-        paddingBottom: 20
+        flex: 1,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "center",
     },
-    Verwerk: {
-        flexDirection: 'column'
-    },
-    verwerkItem: {
+    title: {
         fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center'
+        fontWeight: "bold",
+        marginBottom: 20,
     },
-    VerwerkButton: {
+    item: {
         fontSize: 15,
-        textAlign: 'center',
-        color: 'blue',
-        padding: 10,
-        fontWeight: 'bold'
-    }
+        marginBottom: 20,
+    },
 });
-
-export default Verwerk;
 
 
 
