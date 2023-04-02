@@ -8,7 +8,9 @@ class MyAccountDetails{
             aanmelddatum,
             stappen,
             bmi,
-            sportSchema
+            sportSchema,
+            eetSchema,
+            hartslag
             ){
             this.accountID = accountID;
             this.username = username;
@@ -17,6 +19,8 @@ class MyAccountDetails{
             this.stappen = stappen;
             this.bmi = bmi;
             this.sportSchema = sportSchema;
+            this.eetSchema = eetSchema;
+            this.hartslag = hartslag;
         }
 }
 
