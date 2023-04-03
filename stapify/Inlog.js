@@ -1,52 +1,19 @@
 import React, { useState } from "react";
-import { Button, Text, TextInput, View, StyleSheet, Alert } from "react-native";
+import { Button, Text, TextInput, View, StyleSheet, Alert, navigation } from "react-native";
 
 // import DatePicker from 'react-native-date-picker'
-import { useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 
-export const CHECK_USER = 
-gql`
-    query {
-        accounts {
-        accountID
-        username
-        geboortedatum
-        aanmelddatum
-        } 
+export const LOG_IN =
+    gql`
+    query login($username: String!, $password: String!) {
+        login(username: $username, password: $password) 
     }
 `;
 
-const Inlog = () => {
+const Inlog = (props) => {
 
-    const submit = () => {
-        if (!formUsername || !formPassword ) {
-            Alert.alert("Some fields are empty, Please try again!");
-        }else if (formUsername == "Enter username" || formPassword == "Enter password") {         // als de useState niet is aangepast, geef error
-            Alert.alert("Invalid username, birthdate or password, Please try again!");
-        }else {       
-            const { loading, error, data } = useQuery(CHECK_USER);
-            if (loading) return <Text>Loading...</Text>;
-            if (error) return <Text>Error :/</Text>;
-            if (data) {
-                let found = false;
-                data.accounts.forEach(element => {
-                    if (element.username == formUsername) {
-                        found = true;
-                    }
-                });
-                if (found) {
-                    Alert.alert("Login succesfull!");
-                    navigation.navigate('Home');
-                }else {
-                    Alert.alert("Invalid username or password, Please try again!");
-                }
-            }
-        }
-          
-    }
-
-    
     // Dit kan je zien als variabelen die je kan aanpassen
     const [formUsername, setFormUsername] = useState("Enter username");
     // const [formBirthdate, setDate] = useState(new Date());
@@ -54,12 +21,19 @@ const Inlog = () => {
     //boolean voor de datepicker model
     // const [open, setOpen] = useState(false)
 
+    console.log(formUsername);
+
+    // use LOG_IN query to get data from database
+
+    const [refetch, { error, data }] = useLazyQuery(LOG_IN);
+
+
     return (
         <View style={Styles.form}>
             <Text style={{ fontSize: 30, marginBottom: 20 }}>
                 Login
             </Text>
-           
+
             <Text style={Styles.label}>
                 Username:
             </Text>
@@ -105,15 +79,47 @@ const Inlog = () => {
             />
             <Button
                 title="Login"
-                onPress={submit}
                 color="#708090"
+                onPress={() => {
+
+                    let ingelogd = false;
+
+                    if (ingelogd) {
+
+                        if (!formUsername || !formPassword) {
+                            Alert.alert("Some fields are empty, Please try again!");                                // als de useState is ingevuld, geef error
+                        } else if (formUsername == "Enter username" || formPassword == "Enter password") {         // als de useState niet is aangepast, geef error
+                            Alert.alert("Invalid username or password, Please try again!");
+                        } else {
+                
+                            refetch({
+                                variables: {
+                                    username: formUsername,
+                                    password: formPassword
+                                }
+                            });
+                
+                            console.log(error);
+                            console.log(data);
+                
+                        }
+                        
+                        if (data) {
+                
+                            ingelogd = true;
+                        
+                        } 
+                    } else {
+                        props.navigation.navigate("Home");
+                    }
+                    
+                }
+            }
             />
         </View>
     );
 
 }
-
-
 
 
 const Styles = StyleSheet.create({

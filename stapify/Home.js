@@ -6,7 +6,7 @@ const Home =(props) => {
 
     const navigeerSport = () => { props.navigation.navigate('Sportschema'); }
     const navigeerEten = () => { props.navigation.navigate('Eetschema'); }
-
+    
     return (
         <ScrollView>
         <View style={Styles.container}>
