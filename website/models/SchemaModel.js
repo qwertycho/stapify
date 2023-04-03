@@ -94,13 +94,13 @@ class SchemaModel {
       if (rows.length == 0) {
         rows = [];
         rows[0] = {
-          maandag: "Geen schema",
-          dinsdag: "Geen schema",
-          woensdag: "Geen schema",
-          donderdag: "Geen schema",
-          vrijdag: "Geen schema",
-          zaterdag: "Geen schema",
-          zondag: "Geen schema",
+          maandag: null,
+          dinsdag: null,
+          woensdag: null,
+          donderdag: null,
+          vrijdag: null,
+          zaterdag: null,
+          zondag: null
         };
       }
 

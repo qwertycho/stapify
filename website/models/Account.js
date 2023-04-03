@@ -69,15 +69,28 @@ class Accounts {
 
   async getbmi(id) {
     try {
+      console.log("getbmi");
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT waarde AS bmi, dateTime as tijd FROM bmi WHERE accountID = ? ORDER BY dateTime DESC LIMIT 1",
         [id]
       );
 
+      console.log(rows);
+
       conn.release();
 
-      let bmi = new BMI.BMI(rows[0].bmi, new Date());
+      let bmi;
+
+      if(rows.length == 0) {
+        console.log("geen bmi");
+        bmi = new BMI.BMI(0, new Date());
+        // console.log(bmi);
+      } else {
+        bmi = new BMI.BMI(rows[0].bmi, new Date());
+      }
+
+      console.log(bmi.bmi);
 
       return bmi;
     } catch (err) {
@@ -97,7 +110,15 @@ class Accounts {
       );
       conn.release();
 
-      let stappen = new AccountDetails.Stappen(rows[0].stappen, new Date());
+      // let stappen = new AccountDetails.Stappen(rows[0].stappen, new Date());
+      let stappen;
+
+      if(rows[0].stappen == null) {
+        stappen = new AccountDetails.Stappen(0, new Date());
+      } else {
+        stappen = new AccountDetails.Stappen(rows[0].stappen, new Date());
+      }
+
       return stappen;
     } catch (err) {
       throw err;
@@ -114,7 +135,15 @@ class Accounts {
 
       conn.release();
 
-      let hartslag = new AccountDetails.Hartslag(rows[0].hartslag, new Date());
+      // let hartslag = new AccountDetails.Hartslag(rows[0].hartslag, new Date());
+
+      let hartslag;
+
+      if(rows.length == 0) {
+        hartslag = new AccountDetails.Hartslag(0, new Date());
+      } else {
+        hartslag = new AccountDetails.Hartslag(rows[0].hartslag, new Date());
+      }
 
       return hartslag;
     } catch (err) {
@@ -133,6 +162,7 @@ class Accounts {
         );
         conn.release();
         let bmi = await this.getbmi(accountID);
+        // console.log("bmi: " + bmi);
         let stappen = await this.getStappen(accountID);
         let sportSchema = await this.SchemaModel.getSchema(accountID);
         let account = rows[0];

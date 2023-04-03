@@ -11,7 +11,7 @@ var { buildSchema } = require("graphql");
 // Load environment variables
 dotenv.config();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 let pool = require("./models/Database");
 
 // routers
