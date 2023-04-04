@@ -26,6 +26,15 @@ var root = {
     return await Account.getMyAccount(cookie);
   },
 
+  cookie: async ({ cookie }) => {
+    let account = await Account.checkCookie(cookie);
+    if (account) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
   stappen: async ({ aantalStappen, cookie }) => {
     try {
       let succes = await Sensor.insertStappen(aantalStappen, cookie);
@@ -48,6 +57,19 @@ var root = {
       let succes = await Sensor.insertBMI(bmi, cookie);
       if (succes) {
         return { code: 200, message: "BMI toegevoegd" };
+      } else {
+        return { code: 500, message: "Inlog fout" };
+      }
+    } catch (err) {
+      return { code: 500, message: err };
+    }
+  },
+
+  lengte: async ({ lengte, cookie }) => {
+    try {
+      let succes = await Sensor.insertLengte(lengte, cookie);
+      if (succes) {
+        return { code: 200, message: "Lengte toegevoegd" };
       } else {
         return { code: 500, message: "Inlog fout" };
       }

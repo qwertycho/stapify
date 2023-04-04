@@ -33,6 +33,11 @@ var schema = buildSchema(`
         tijd: String
     }
 
+    type lengteType {
+        lengte: Int,
+        tijd: String
+    }
+
     type hartslagType {
         hartslag: Int,
         tijd: String
@@ -71,6 +76,7 @@ var schema = buildSchema(`
         geboortedatum: String,
         aanmelddatum: String,
         stappen: StappenType,
+        lengte: lengteType,
         bmi: BMIType,
         hartslag: hartslagType,
         sportSchema: sportSType,
@@ -89,6 +95,7 @@ var schema = buildSchema(`
         login(username: String, password: String): String
         sport(sportID: Int): String
         stapRange(cookie: String, start: String, end: String): [StappenType]
+        cookie(cookie: String): Boolean
     }
 
     type Mutation {
@@ -98,6 +105,7 @@ var schema = buildSchema(`
         hartslag(hartslag: Int, cookie: String): responseType
         sportSchema(sportSchema: sportSchemaInput, cookie: String): responseType
         eetSchema(eetSchema: eetSchemaInput, cookie: String): responseType
+        lengte(lengte: Int, cookie: String): responseType
     }
 `);
 

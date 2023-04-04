@@ -14,7 +14,6 @@ class Accounts {
   }
 
   async checkCookie(cookie) {
-    try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT accountID FROM cookies WHERE token = ? AND date > NOW()",
@@ -28,13 +27,9 @@ class Accounts {
       } else {
         return false;
       }
-    } catch (err) {
-      throw err;
-    }
   }
 
   async getAccounts() {
-    try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT accountID, username, aanmelddatum FROM accounts"
@@ -42,13 +37,9 @@ class Accounts {
       conn.release();
 
       return rows;
-    } catch (err) {
-      throw err;
-    }
   }
 
   async getAccount(username) {
-    try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT accountID, username, geboortedatum, aanmelddatum FROM accounts WHERE username = ?",
@@ -62,13 +53,9 @@ class Accounts {
         rows[0].geboortedatum,
         rows[0].aanmelddatum
       );
-    } catch (err) {
-      throw err;
-    }
   }
 
   async getbmi(id) {
-    try {
       console.log("getbmi");
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
@@ -93,13 +80,9 @@ class Accounts {
       console.log(bmi.bmi);
 
       return bmi;
-    } catch (err) {
-      throw err;
-    }
   }
 
   async getStappen(id) {
-    try {
       let conn = await this.pool.getConnection();
       // tel alle stappen op van de huidige dag 
       let rows = await conn.query(`SELECT SUM(waarde) AS stappen
@@ -110,7 +93,6 @@ class Accounts {
       );
       conn.release();
 
-      // let stappen = new AccountDetails.Stappen(rows[0].stappen, new Date());
       let stappen;
 
       if(rows[0].stappen == null) {
@@ -120,13 +102,9 @@ class Accounts {
       }
 
       return stappen;
-    } catch (err) {
-      throw err;
-    }
   }
 
   async getHartslag(id) {
-    try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT waarde AS hartslag, dateTime as tijd FROM hartslagen WHERE accountID = ? ORDER BY dateTime DESC LIMIT 1",
@@ -134,8 +112,6 @@ class Accounts {
       );
 
       conn.release();
-
-      // let hartslag = new AccountDetails.Hartslag(rows[0].hartslag, new Date());
 
       let hartslag;
 
@@ -146,10 +122,27 @@ class Accounts {
       }
 
       return hartslag;
-    } catch (err) {
-      throw err;
-    }
   }
+
+  async getLengte(id) {
+      let conn = await this.pool.getConnection();
+      let rows = await conn.query(
+        "SELECT waarde AS lengte, dateTime as tijd FROM lengtes WHERE accountID = ? ORDER BY dateTime DESC LIMIT 1",
+        [id]
+      );
+
+      conn.release();
+
+      let lengte;
+
+      if(rows.length == 0) {
+        lengte = new AccountDetails.Lengte(0, new Date());
+      } else {
+        lengte = new AccountDetails.Lengte(rows[0].lengte, new Date());
+      }
+
+      return lengte;
+    } 
 
   async getMyAccount(cookie) {
     let accountID = await this.checkCookie(cookie);
@@ -168,6 +161,9 @@ class Accounts {
         let account = rows[0];
         let eetSchema = await this.SchemaModel.getEetSchema(accountID);
         let hartslag = await this.getHartslag(accountID);
+        let lengte = await this.getLengte(accountID);
+
+        console.log("lengte: " + lengte);
 
         let MA = new myAccount(
           accountID, 
@@ -178,7 +174,8 @@ class Accounts {
           bmi,
           sportSchema,
           eetSchema,
-          hartslag
+          hartslag,
+          lengte
           );
 
         return MA;
@@ -244,14 +241,20 @@ class Accounts {
         [username]
       );
 
+      conn.release();
+
       if (rows.length == 0) {
-        conn.release();
         return false;
       } else {
         let hash = rows[0].wachtwoord;
+
         let result = await bcrypt.compare(password, hash);
-        conn.release();
-        return await this.createCookie(username);
+
+        if(result) {
+           return await this.createCookie(username);
+        } else {
+          return false;
+        }
       }
     } catch (err) {
       throw err;
