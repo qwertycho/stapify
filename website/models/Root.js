@@ -26,6 +26,15 @@ var root = {
     return await Account.getMyAccount(cookie);
   },
 
+  cookie: async ({ cookie }) => {
+    let account = await Account.checkCookie(cookie);
+    if (account) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
   stappen: async ({ aantalStappen, cookie }) => {
     try {
       let succes = await Sensor.insertStappen(aantalStappen, cookie);

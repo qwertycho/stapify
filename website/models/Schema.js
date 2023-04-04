@@ -89,6 +89,7 @@ var schema = buildSchema(`
         login(username: String, password: String): String
         sport(sportID: Int): String
         stapRange(cookie: String, start: String, end: String): [StappenType]
+        cookie(cookie: String): Boolean
     }
 
     type Mutation {
