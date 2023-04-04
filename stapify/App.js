@@ -12,6 +12,8 @@ import Verwerk from './Verwerk';
 import Inlog from './Inlog';
 import Sportschema from './Sportschema';
 import Eetschema from './Eetschema';
+import Stappen from './views/Stappen';
+import Profiel from './views/Profiel';
 
 // Initialize Apollo Client
 const client = new ApolloClient({
@@ -72,6 +74,22 @@ const App = () => {
                     <Stack.Screen
                         name="Eetschema"
                         component={Eetschema}
+                        options={{
+                            headerTitleAlign: 'center'
+                        }}
+                    >
+                    </Stack.Screen>
+                    <Stack.Screen
+                        name="Stappen"
+                        component={Stappen}
+                        options={{
+                            headerTitleAlign: 'center'
+                        }}
+                    >
+                    </Stack.Screen>
+                    <Stack.Screen
+                        name="Profiel"
+                        component={Profiel}
                         options={{
                             headerTitleAlign: 'center'
                         }}

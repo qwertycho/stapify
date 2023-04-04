@@ -6,6 +6,8 @@ const Home =(props) => {
 
     const navigeerSport = () => { props.navigation.navigate('Sportschema'); }
     const navigeerEten = () => { props.navigation.navigate('Eetschema'); }
+    const navigeerStappen = () => { props.navigation.navigate('Stappen'); }
+    const navigeerProfiel = () => { props.navigation.navigate('Profiel'); }
 
     return (
         <ScrollView>
@@ -29,6 +31,18 @@ const Home =(props) => {
                 <TouchableOpacity style={Styles.NavBox} onPress={navigeerEten}>
                     <Text style={Styles.title}>Eetschema</Text>
                     <Text style={Styles.text}>Klik om naar jouw Eetschema te gaan </Text>
+                </TouchableOpacity>
+            </View>
+            <View>
+                <TouchableOpacity style={Styles.NavBox} onPress={navigeerStappen}>
+                    <Text style={Styles.title}>Stappies</Text>
+                    <Text style={Styles.text}>Klik om naar jouw Stappies te gaan </Text>
+                </TouchableOpacity>
+            </View>
+            <View>
+                <TouchableOpacity style={Styles.NavBox} onPress={navigeerProfiel}>
+                    <Text style={Styles.title}>profieltje</Text>
+                    <Text style={Styles.text}>Klik om naar jouw profieltje te gaan </Text>
                 </TouchableOpacity>
             </View>
             <View style={Styles.ruimte}>
