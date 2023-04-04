@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Menu = () => {
 
@@ -16,10 +17,14 @@ const Menu = () => {
                 <Text style={Styles.ButtonText}>Verwerk</Text>
             </TouchableOpacity>
             <TouchableOpacity
-            onPress={() => navigation.navigate('Inlog')}
+            onPress={() => 
+                AsyncStorage.removeItem('login')
+                .then(() => navigation.navigate('Inlog'))
+
+            }
             style={Styles.Button}
             >
-                <Text style={Styles.ButtonText}>Inlog</Text>
+                <Text style={Styles.ButtonText}>Logout</Text>
             </TouchableOpacity>
         </View>
     );
