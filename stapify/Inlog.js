@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Text, TextInput, View, StyleSheet, Alert} from 'react-native';
+import {Button, Text, TextInput, View, StyleSheet} from 'react-native';
 
 // import DatePicker from 'react-native-date-picker'
 import {useQuery} from '@apollo/client';
@@ -18,8 +18,8 @@ export const CHECK_USER = gql`
 //     query {login(username: "azertycho", password: "123")}`;
 
 const Inlog = (props) => {
-  const [formUsername, setFormUsername] = useState('enter username');
-  const [formPassword, setFormPassword] = useState('');
+  const [formUsername, setFormUsername] = useState('Enter username');
+  const [formPassword, setFormPassword] = useState('Enter password');
 
 //   check of de gebruiker is ingelogd
     const checkLogin = async () => {
@@ -45,6 +45,7 @@ const Inlog = (props) => {
 
   return (
     <View style={Styles.container}>
+        <Text style={{fontSize: 20, marginBottom: 20}}>Login</Text>
       <TextInput
         style={Styles.textInput}
         onChangeText={usename => setFormUsername(usename)}
@@ -69,6 +70,9 @@ const Inlog = (props) => {
 
           if (!formUsername || !formPassword) {
             setState('Some fields are empty, Please try again!');
+          } 
+          else if (formUsername == 'Enter username' || formPassword == 'Enter password') {
+            setState('Some fields aren\'t changed, Please try again!');
           } else {
             if (loading) setState('Loading...');
             if (error) setState('Error :/');
@@ -78,7 +82,6 @@ const Inlog = (props) => {
 
                 // save the cookie string named login in the local storage
                 AsyncStorage.setItem('login', data.login);
-
                 props.navigation.navigate('Home');
               }
             } else {
@@ -99,6 +102,15 @@ const Styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
+    textInput: {
+        height: 40,
+        width: 200,
+        borderColor: 'gray',
+        borderWidth: 1,
+        margin: 10,
+        padding: 10,
+    },
+
 });
 
 export default Inlog;

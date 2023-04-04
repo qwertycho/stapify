@@ -29,7 +29,7 @@ const App = () => {
             <NavigationContainer>
                 <Stack.Navigator
                     //default screen is de inlog pagina, maar voor testen is de home pagina default
-                    initialRouteName="Home"
+                    initialRouteName="Inlog"
                     //Zorgt ervoor dat er geen header is op default pagina
                    options={{
                         headerMode: 'false'
