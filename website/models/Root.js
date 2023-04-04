@@ -65,6 +65,19 @@ var root = {
     }
   },
 
+  lengte: async ({ lengte, cookie }) => {
+    try {
+      let succes = await Sensor.insertLengte(lengte, cookie);
+      if (succes) {
+        return { code: 200, message: "Lengte toegevoegd" };
+      } else {
+        return { code: 500, message: "Inlog fout" };
+      }
+    } catch (err) {
+      return { code: 500, message: err };
+    }
+  },
+
   hartslag: async ({ hartslag, cookie }) => {
     try {
       let succes = await Sensor.insertHartslag(hartslag, cookie);

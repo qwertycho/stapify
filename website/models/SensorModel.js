@@ -84,6 +84,26 @@ class Sensor {
     }
   }
 
+  async insertLengte(lengte, cookie) {
+    let accountID = await this.checkCookie(cookie);
+    if (accountID) {
+      let conn = await this.pool.getConnection();
+      let rows = await conn.query(
+        "INSERT INTO lengtes (waarde, accountID) VALUES (?, ?)",
+        [lengte, accountID]
+      );
+
+      conn.release();
+
+      return true;
+
+    } else {
+
+      return false;
+
+    }
+  }
+
   async insertBMI(bmi, cookie) {
     let accountID = await this.checkCookie(cookie);
     if (accountID) {

@@ -10,7 +10,8 @@ class MyAccountDetails{
             bmi,
             sportSchema,
             eetSchema,
-            hartslag
+            hartslag,
+            lengte
             ){
             this.accountID = accountID;
             this.username = username;
@@ -21,6 +22,7 @@ class MyAccountDetails{
             this.sportSchema = sportSchema;
             this.eetSchema = eetSchema;
             this.hartslag = hartslag;
+            this.lengte = lengte;
         }
 }
 

@@ -28,9 +28,17 @@ class Hartslag {
     }
 }
 
+class Lengte {
+    constructor(lengte, tijd){
+        this.lengte = lengte;
+        this.tijd = tijd;
+    }
+}
+
 module.exports = {
     accountDetails,
     BMI,
     Stappen,
-    Hartslag
+    Hartslag,
+    Lengte
 }
