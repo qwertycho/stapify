@@ -5,13 +5,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
-
 //Components
-import Home from './Home';
-import Verwerk from './Verwerk';
-import Inlog from './Inlog';
-import Sportschema from './Sportschema';
-import Eetschema from './Eetschema';
+import Home from './views/Home';
+import Verwerk from './views/Verwerk';
+import Inlog from './views/Inlog';
+import Sportschema from './views/Sportschema';
+import Eetschema from './views/Eetschema';
 import Stappen from './views/Stappen';
 import Profiel from './views/Profiel';
 
