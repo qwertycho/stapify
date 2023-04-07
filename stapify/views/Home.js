@@ -35,7 +35,7 @@ const Home =(props) => {
             </View>
             <View>
                 <TouchableOpacity style={Styles.NavBox} onPress={navigeerStappen}>
-                    <Text style={Styles.title}>Stappies</Text>
+                    <Text style={Styles.title}>Stappen</Text>
                     <Text style={Styles.text}>Klik om naar jouw Stappies te gaan </Text>
                 </TouchableOpacity>
             </View>

@@ -15,7 +15,7 @@ import Eetschema from './views/Eetschema';
 import Stappen from './views/Stappen';
 import Profiel from './views/Profiel';
 
-// Initialize Apollo Client
+// Initialize Apollo Client without cache
 const client = new ApolloClient({
     uri: 'https://schoolmoettestdomeinenhebben.nl/graphql',
     cache: new InMemoryCache()
