@@ -1,5 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View, StyleSheet, Alert, Button} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Alert,
+  Button,
+  Touchable,
+  TouchableOpacity,
+} from 'react-native';
 
 import {ApolloError, useMutation, useQuery} from '@apollo/client';
 import {getCookie} from '../models/Cookie';
@@ -9,10 +17,9 @@ import {
   UPDATE_EETSCHEMA,
   CREATE_ACCOUNT,
 } from '../graphs/EetSchema';
-import {TextInput} from 'react-native-gesture-handler';
+import {ScrollView, TextInput} from 'react-native-gesture-handler';
 
 export default function Eetschema() {
-
   const [cookie, setCookie] = React.useState('');
   const [TempCookie, setTempCookie] = React.useState('');
   const [status, setStatus] = React.useState('');
@@ -92,105 +99,134 @@ export default function Eetschema() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Eetschema</Text>
-      <Text style={styles.text}>{status}</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.title}>Eetschema</Text>
+        <Text style={styles.statusText}>{status}</Text>
 
-      {/* controleren of niet null */}
-      {eetSchema !== null ? (
-        <View>
-          {/* table met de dagen en inputs met de waarde*/}
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.text}>Maandag</Text>
-              <TextInput
-                style={styles.input}
-                value={eetSchema.maandag}
-                onChangeText={text =>
-                  setEetSchema({...eetSchema, maandag: text})
-                }
-              />
+        {/* controleren of niet null */}
+        {eetSchema !== null ? (
+          <View>
+            {/* table met de dagen en inputs met de waarde*/}
+            <View style={styles.table}>
+              <View style={styles.row}>
+                <Text style={styles.text}>Maandag</Text>
+                <TextInput
+                  style={styles.input}
+                  value={eetSchema.maandag}
+                  onChangeText={text =>
+                    setEetSchema({...eetSchema, maandag: text})
+                  }
+                />
+              </View>
+
+              <View style={styles.row}>
+                <Text style={styles.text}>Dinsdag</Text>
+                <TextInput
+                  style={styles.input}
+                  value={eetSchema.dinsdag}
+                  onChangeText={text =>
+                    setEetSchema({...eetSchema, dinsdag: text})
+                  }
+                />
+              </View>
+
+              <View style={styles.row}>
+                <Text style={styles.text}>Woensdag</Text>
+                <TextInput
+                  style={styles.input}
+                  value={eetSchema.woensdag}
+                  onChangeText={text =>
+                    setEetSchema({...eetSchema, woensdag: text})
+                  }
+                />
+              </View>
+
+              <View style={styles.row}>
+                <Text style={styles.text}>Donderdag</Text>
+                <TextInput
+                  style={styles.input}
+                  value={eetSchema.donderdag}
+                  onChangeText={text =>
+                    setEetSchema({...eetSchema, donderdag: text})
+                  }
+                />
+              </View>
+
+              <View style={styles.row}>
+                <Text style={styles.text}>Vrijdag</Text>
+                <TextInput
+                  style={styles.input}
+                  value={eetSchema.vrijdag}
+                  onChangeText={text =>
+                    setEetSchema({...eetSchema, vrijdag: text})
+                  }
+                />
+              </View>
+
+              <View style={styles.row}>
+                <Text style={styles.text}>Zaterdag</Text>
+                <TextInput
+                  style={styles.input}
+                  value={eetSchema.zaterdag}
+                  onChangeText={text =>
+                    setEetSchema({...eetSchema, zaterdag: text})
+                  }
+                />
+              </View>
+
+              <View style={styles.row}>
+                <Text style={styles.text}>Zondag</Text>
+                <TextInput
+                  style={styles.input}
+                  value={eetSchema.zondag}
+                  onChangeText={text =>
+                    setEetSchema({...eetSchema, zondag: text})
+                  }
+                />
+              </View>
             </View>
 
-            <View style={styles.row}>
-              <Text style={styles.text}>Dinsdag</Text>
-              <TextInput
-                style={styles.input}
-                value={eetSchema.dinsdag}
-                onChangeText={text =>
-                  setEetSchema({...eetSchema, dinsdag: text})
-                }
-              />
-            </View>
-
-            <View style={styles.row}>
-              <Text style={styles.text}>Woensdag</Text>
-              <TextInput
-                style={styles.input}
-                value={eetSchema.woensdag}
-                onChangeText={text =>
-                  setEetSchema({...eetSchema, woensdag: text})
-                }
-              />
-            </View>
-
-            <View style={styles.row}>
-              <Text style={styles.text}>Donderdag</Text>
-              <TextInput
-                style={styles.input}
-                value={eetSchema.donderdag}
-                onChangeText={text =>
-                  setEetSchema({...eetSchema, donderdag: text})
-                }
-              />
-            </View>
-
-            <View style={styles.row}>
-              <Text style={styles.text}>Vrijdag</Text>
-              <TextInput
-                style={styles.input}
-                value={eetSchema.vrijdag}
-                onChangeText={text =>
-                  setEetSchema({...eetSchema, vrijdag: text})
-                }
-              />
-            </View>
-
-            <View style={styles.row}>
-              <Text style={styles.text}>Zaterdag</Text>
-              <TextInput
-                style={styles.input}
-                value={eetSchema.zaterdag}
-                onChangeText={text =>
-                  setEetSchema({...eetSchema, zaterdag: text})
-                }
-              />
-            </View>
-
-            <View style={styles.row}>
-              <Text style={styles.text}>Zondag</Text>
-              <TextInput
-                style={styles.input}
-                value={eetSchema.zondag}
-                onChangeText={text =>
-                  setEetSchema({...eetSchema, zondag: text})
-                }
-              />
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                submit();
+              }}
+              style={styles.button}>
+              <Text style={styles.text}>Opslaan</Text>
+            </TouchableOpacity>
           </View>
-
-          <Button
-            title="Opslaan"
-            onPress={() => {
-              submit();
-            }}
-          />
-        </View>
-      ) : (
-        <Text style={styles.text}>Geen eetschema</Text>
-      )}
-    </View>
+        ) : (
+          <Text style={styles.text}>Geen eetschema</Text>
+        )}
+      </View>
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    margin: 5,
+    borderWidth: 1,
+  },
+
+  text: {
+    fontSize: 20,
+    color: 'black',
+  },
+
+  button: {
+    margin: 10,
+    padding: 10,
+    width: '50%',
+    backgroundColor: '#2196F3',
+    borderRadius: 10,
+  },
+
+  statusText: {
+    fontSize: 10,
+    color: 'grey',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+});
