@@ -9,6 +9,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import Home from './views/Home';
 import Verwerk from './views/Verwerk';
 import Inlog from './views/Inlog';
+import Register from './views/Register';
 import Sportschema from './views/Sportschema';
 import Eetschema from './views/Eetschema';
 import Stappen from './views/Stappen';
@@ -57,6 +58,14 @@ const App = () => {
                     <Stack.Screen
                         name="Inlog"
                         component={Inlog}
+                        options={{
+                            headerTitleAlign: 'center'
+                        }}
+                    >
+                    </Stack.Screen>
+                    <Stack.Screen
+                        name="Register"
+                        component={Register}
                         options={{
                             headerTitleAlign: 'center'
                         }}
