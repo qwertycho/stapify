@@ -1,15 +1,15 @@
-import React, {useState} from 'react';
-import {Button, Text, TextInput, View, StyleSheet} from 'react-native';
+import React, { useState } from 'react';
+import { Button, Text, TextInput, View, StyleSheet } from 'react-native';
 
 import DatePicker from 'react-native-date-picker'
-import {useMutation, gql} from '@apollo/client';
+import { useMutation, gql } from '@apollo/client';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // make a new user
 export const CREATE_USER = gql`
-  mutation createAccount($username: String!, $password: String!, $birthday: Date!) {
-    createAccount(username: $username, password: $password, birthday: $birthday)
+  mutation createAccount($username: String!, $password: String!, $geboortedatum: String!) {
+    createAccount(username: $username, password: $password, geboortedatum: $geboortedatum)
   }
 `;
 
@@ -21,17 +21,20 @@ const Register = (props) => {
   const [formBirthday, setFormBirthday] = useState(new Date())
   const [open, setOpen] = useState(false)
 
-//   het bericht dat wordt weergegeven wanneer op de knop word gedrukt
+  //   het bericht dat wordt weergegeven wanneer op de knop word gedrukt
   const [state, setState] = useState('');
 
+  //fomBirthday zonder tijd
+  const date = formBirthday.toISOString().slice(0, 10);
+
   //  make a new user
-  const {loading, error, data} = useMutation(CREATE_USER, {
-    variables: {username: formUsername, password: formPassword, birthday: formBirthday},
+  const { loading, error, data } = useMutation(CREATE_USER, {
+    variables: { username: formUsername, password: formPassword, geboortedatum: date },
   });
 
   return (
     <View style={Styles.container}>
-      <Text style={{fontSize: 20, marginBottom: 5}}>Username</Text>
+      <Text style={{ fontSize: 20, marginBottom: 5 }}>Username</Text>
       <TextInput
         style={Styles.textInput}
         onChangeText={usename => setFormUsername(usename)}
@@ -39,10 +42,10 @@ const Register = (props) => {
         autoCapitalize="none"
         selectTextOnFocus={true}
       />
-      <Text style={{fontSize: 20, marginBottom: 15, marginTop:15}}>Date of birth</Text>
-      <Button 
-        title="Birth date" 
-        onPress={() => setOpen(true)} 
+      <Text style={{ fontSize: 20, marginBottom: 15, marginTop: 15 }}>Date of birth</Text>
+      <Button
+        title="Birth date"
+        onPress={() => setOpen(true)}
         color="#708090"
       ></Button>
       <DatePicker
@@ -58,7 +61,7 @@ const Register = (props) => {
           setOpen(false)
         }}
       />
-      <Text style={{fontSize: 20, marginBottom: 5, marginTop: 20}}>Password</Text>
+      <Text style={{ fontSize: 20, marginBottom: 5, marginTop: 20 }}>Password</Text>
       <TextInput
         style={Styles.textInput}
         onChangeText={password => setFormPassword(password)}
@@ -75,19 +78,20 @@ const Register = (props) => {
         onPress={() => {
 
           console.log(formUsername)
+          // console.log(formBirthday)
           console.log(formPassword)
-          console.log(formBirthday)
+          console.log(date)
 
           if (!formUsername || !formPassword || !formBirthday) {
             setState('Some fields are empty, Please try again!');
-          } 
+          }
           else if (formUsername == 'Enter username' || formPassword == 'Enter password' || formBirthday == new Date()) {
             setState('Some fields aren\'t changed, Please try again!');
           } else {
             if (loading) setState('Loading...');
             if (error) setState('Error :/');
             if (data.createAccount != 'false') {
-              if (data.createAccount) {
+              if (data.createAccount == 'true') {
                 setState('Register succesfull!');
 
                 // save the cookie string named login in the local storage
@@ -112,14 +116,14 @@ const Styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-    textInput: {
-        height: 40,
-        width: 200,
-        borderColor: 'gray',
-        borderWidth: 1,
-        margin: 10,
-        padding: 10,
-    },
+  textInput: {
+    height: 40,
+    width: 200,
+    borderColor: 'gray',
+    borderWidth: 1,
+    margin: 10,
+    padding: 10,
+  },
 
 });
 
