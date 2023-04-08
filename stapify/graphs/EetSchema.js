@@ -42,8 +42,8 @@ export const UPDATE_EETSCHEMA = gql`
     }
 `;
 
-export const CREATE_ACCOUNT = gql`
-    mutation createAccount($username: String, $geboortedatum: String, $password: String) {
-        createAccount(username: $username, geboortedatum: $geboortedatum, password: $password)
-    }
-`;
+// export const CREATE_ACCOUNT = gql`
+//     mutation createAccount($username: String, $geboortedatum: String, $password: String) {
+//         createAccount(username: $username, geboortedatum: $geboortedatum, password: $password)
+//     }
+// `;

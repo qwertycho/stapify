@@ -5,12 +5,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
-
 //Components
-import Home from './Home';
-import Verwerk from './Verwerk';
-import Inlog from './Inlog';
-import Sportschema from './Sportschema';
+import Home from './views/Home';
+import Verwerk from './views/Verwerk';
+import Inlog from './views/Inlog';
+import Register from './views/Register';
+import Sportschema from './views/Sportschema';
 import Eetschema from './views/Eetschema';
 import Stappen from './views/Stappen';
 import Profiel from './views/Profiel';
@@ -58,6 +58,14 @@ const App = () => {
                     <Stack.Screen
                         name="Inlog"
                         component={Inlog}
+                        options={{
+                            headerTitleAlign: 'center'
+                        }}
+                    >
+                    </Stack.Screen>
+                    <Stack.Screen
+                        name="Register"
+                        component={Register}
                         options={{
                             headerTitleAlign: 'center'
                         }}

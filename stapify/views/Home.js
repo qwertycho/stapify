@@ -14,7 +14,7 @@ const Home =(props) => {
         <View style={Styles.container}>
             <Image 
                 style={Styles.stapifyLogo}
-                source={require('./images/stapifyLogo.png')}
+                source={require('../images/stapifyLogo.png')}
             />
             <Text style={Styles.title}>Stapify</Text>
             <Text style={Styles.subtitle}>{props.username}</Text>

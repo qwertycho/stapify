@@ -88,6 +88,19 @@ const Inlog = (props) => {
         }}
         color="#708090"
       />
+      <Text
+        style={{
+          fontSize: 20,
+          margin: 20,
+          textAlign: 'center',
+        }}>
+        Or
+        </Text>
+      <Button
+        title="Register"
+        onPress={() => props.navigation.navigate('Register')}
+        color="#708090"
+      />
     </View>
   );
 };
