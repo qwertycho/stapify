@@ -32,6 +32,7 @@ query{
 }
 `;
 
+
 const Register = props => {
   const [formUsername, setFormUsername] = useState('Enter username');
   const [formPassword, setFormPassword] = useState('Enter password');
