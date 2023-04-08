@@ -142,7 +142,7 @@ const Register = props => {
           ) {
             setState("Some fields aren't changed, Please try again!");
           } else if (
-            // check of de username al in gebruik is
+            // roept de functie aan die kijkt of de username al in gebruik is
             checkUsername(formUsername) == false
           ) {
             setState('Username already in use, Please try again!');
