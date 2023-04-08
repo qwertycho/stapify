@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import {Button, Text, TextInput, View, StyleSheet, Alert} from 'react-native';
 
 import DatePicker from 'react-native-date-picker';
-import {useMutation, gql} from '@apollo/client';
+import {useMutation, gql, useQuery} from '@apollo/client';
+
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {on} from '../fakers/hartslagF';
@@ -20,6 +21,18 @@ export const CREATE_USER = gql`
       geboortedatum: $geboortedatum
     )
   }
+`;
+
+// check of de username al in gebruik is
+export const CHECK_USERNAME = gql`
+query{ 
+  accounts {
+      accountID
+      username
+      geboortedatum
+      aanmelddatum
+  } 
+}
 `;
 
 const Register = props => {
@@ -54,6 +67,22 @@ const Register = props => {
         geboortedatum: date,
       },
     });
+  };
+
+  // query om te kijken of de username al in gebruik is
+  const {loading: loading2, error: error2, data: data2} = useQuery(CHECK_USERNAME);
+
+  // check of de username al in gebruik is
+  const checkUsername = () => {
+    if (data2) {
+      for (let i = 0; i < data2.accounts.length; i++) {
+        if (data2.accounts[i].username === formUsername) {
+          setState('Username already in use');
+          return false;
+        }
+      }
+    }
+    return true;
   };
 
   return (
@@ -112,10 +141,20 @@ const Register = props => {
             formBirthday == new Date()
           ) {
             setState("Some fields aren't changed, Please try again!");
+          } else if (
+            // check of de username al in gebruik is
+            checkUsername(formUsername) == false
+          ) {
+            setState('Username already in use, Please try again!');
           } else {
-
-            // de funkie die ding dingust aanroepen
+            // de functie die de mutation uitvoert
             submit();
+
+            // de gebruiker wordt geregistreerd
+            Alert.alert('You are registered!');
+
+            //na het registreren wordt de gebruiker naar de login pagina gestuurd
+            props.navigation.navigate('Inlog');
           }
         }}
         color="#708090"
