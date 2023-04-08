@@ -46,7 +46,7 @@ const Register = props => {
   //   het bericht dat wordt weergegeven wanneer op de knop word gedrukt
   const [state, setState] = useState('');
 
-  //fomBirthday zonder tijd
+  //fomBirthday omzetten naar een string die in de database kan worden opgeslagen
   const date = formBirthday.toISOString().slice(0, 10);
 
   //  make a new user
