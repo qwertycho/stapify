@@ -27,10 +27,7 @@ export const CREATE_USER = gql`
 export const CHECK_USERNAME = gql`
 query{ 
   accounts {
-      accountID
       username
-      geboortedatum
-      aanmelddatum
   } 
 }
 `;
@@ -47,7 +44,9 @@ const Register = props => {
   const [state, setState] = useState('');
 
   //fomBirthday omzetten naar een string die in de database kan worden opgeslagen
+  //maakt bijvoorbeeld 2021-01-01 van 2021-01-01T00:00:00.000Z
   const date = formBirthday.toISOString().slice(0, 10);
+
 
   //  make a new user
   // juiste onzin voor een mutation
@@ -151,7 +150,7 @@ const Register = props => {
             submit();
 
             // de gebruiker wordt geregistreerd
-            Alert.alert('You are registered!');
+            Alert.alert('Welcome "' + formUsername + '", you are registered!');
 
             //na het registreren wordt de gebruiker naar de login pagina gestuurd
             props.navigation.navigate('Inlog');
