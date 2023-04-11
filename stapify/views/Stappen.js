@@ -59,6 +59,7 @@ export default function Stappen() {
   // de query voor het ophalen van de stappen
   // er word een check gedaan of de cookie leeg is
   const {loading, error, data} = useQuery(GET_STAPPEN, {
+    fetchPolicy: 'no-cache',
     variables: {cookie: cookie},
     skip: cookie === '',
     onCompleted: data => {
