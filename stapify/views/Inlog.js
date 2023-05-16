@@ -14,9 +14,6 @@ export const CHECK_USER = gql`
   }
 `;
 
-// export const CHECK_USER = gql`
-//     query {login(username: "azertycho", password: "123")}`;
-
 const Inlog = (props) => {
   const [formUsername, setFormUsername] = useState('Enter username');
   const [formPassword, setFormPassword] = useState('Enter password');
@@ -89,6 +86,19 @@ const Inlog = (props) => {
             }
           }
         }}
+        color="#708090"
+      />
+      <Text
+        style={{
+          fontSize: 20,
+          margin: 20,
+          textAlign: 'center',
+        }}>
+        Or
+        </Text>
+      <Button
+        title="Register"
+        onPress={() => props.navigation.navigate('Register')}
         color="#708090"
       />
     </View>

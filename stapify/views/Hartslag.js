@@ -3,33 +3,33 @@ import {Button, Text, TextInput, View, StyleSheet, Alert} from 'react-native';
 
 import {useQuery} from '@apollo/client';
 
-import {GET_STAPPEN} from '../graphs/Stappen';
+import {GET_HARTSLAGEN} from '../graphs/Hartslagen';
 import {getCookie} from '../models/Cookie';
 import {CHECK_COOKIE} from '../graphs/Login';
 
-import StapModel from '../models/Stappen';
+import HartModel from '../models/Hartslagen';
 
 /**
  * 
- * @param {*} props (stappen)
+ * @param {*} props (Hartslag)
  * @returns Text Component
- * Deze functie genereert een tekst component met een aanrader voor stappen
+ * Deze functie genereert een tekst component met een aanrader voor Hartslag
  */
-export const StapMessage = props => {
-  const stapModel = new StapModel();
+export const HartMessage = props => {
+  const hartModel = new HartModel();
   return (
     <Text style={styles.aanrader}>
-      {stapModel.getStepMessage(props.stappen)}
+      {hartModel.getHartMessage(props.hartslag)}
     </Text>
   );
 };
 
-export default function Stappen() {
+export default function Hartslag() {
   // haal cookie op
   const [cookie, setCookie] = React.useState('');
   const [TempCookie, setTempCookie] = React.useState('');
 
-  const [stappen, setStappen] = React.useState(0);
+  const [Hartslag, setHartslag] = React.useState(0);
 
   const [status, setStatus] = React.useState('');
 
@@ -56,19 +56,26 @@ export default function Stappen() {
     },
   });
 
-  // de query voor het ophalen van de stappen
+  // de query voor het ophalen van de Hartslag
   // er word een check gedaan of de cookie leeg is
-  const {loading, error, data} = useQuery(GET_STAPPEN, {
+  const {loading, error, data} = useQuery(GET_HARTSLAGEN, {
     fetchPolicy: 'no-cache',
     variables: {cookie: cookie},
     skip: cookie === '',
     onCompleted: data => {
-      if (data.myAccount.stappen.aantalStappen === 0) {
-        setStatus('Geen stappen');
-        setStappen(0);
-      } else {
-        setStatus('Stappen opgehaald');
-        setStappen(data.myAccount.stappen.aantalStappen);
+      if (data.myAccount.hartslag.hartslag === 0) {
+        setStatus('Geen hartslag data');
+        setHartslag(0);
+      }
+      // controleren of de hardslag data ouder is dan 5 minuten
+      else if(data.myAccount.hartslag.tijd < new Date() - 300000)
+      {
+        setStatus('Geen recente hartslag data');
+        setHartslag(0);
+      }
+      else {
+        setStatus('Hartslag opgehaald');
+        setHartslag(data.myAccount.hartslag.hartslag);
       }
     },
   });
@@ -83,8 +90,8 @@ export default function Stappen() {
         setCookie(cookie);
       }}>
       <Text style={styles.statusText}>{status}</Text>
-      <Text style={styles.stapText}>Stappen: {stappen}</Text>
-      <StapMessage stappen={stappen} />
+      <Text style={styles.hartText}>Hartslag: {Hartslag}</Text>
+      <HartMessage hartslag={Hartslag} />
     </View>
   );
 }
@@ -102,7 +109,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 
-  stapText: {
+  hartText: {
     fontSize: 26,
     color: 'black',
     textAlign: 'center',
