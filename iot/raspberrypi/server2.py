@@ -1,37 +1,34 @@
-# to use this code you need to install the following libraries:
-# pip install graphqlclient
-# pip install adafruit-circuitpython-mma8451
-
-# the code:
 import json
 import random
 import threading
 import time
 import math
+import requests
+
 from graphqlclient import GraphQLClient
 
-# graphgl client
+# GraphQL client
 client = GraphQLClient('https://schoolmoettestdomeinenhebben.nl/graphql')
 
-# login query
+# Login query
 login = '''
 query Login($username: String!, $password: String!) {
     login(username: $username, password: $password)
 }
 '''
 
-# login gegevens
+# Login variables
 variablesLogin = {
     'username': 'azertycho',
     'password': '123',
 }
 
-# login antwoord
+# Login response
 response_login = client.execute(login, variablesLogin)
-# get the cookie from the response which is located in data>login>cookie
+# Get the cookie from the response which is located in data > login > cookie
 cookie = json.loads(response_login)['data']['login']
 
-# stap toevoegen query
+# Mutation to add step count
 voegStapToe = '''
 mutation AddStap($aantalStappen: Int!, $cookie: String!) {
     stappen(aantalStappen: $aantalStappen, cookie: $cookie) {
@@ -41,50 +38,86 @@ mutation AddStap($aantalStappen: Int!, $cookie: String!) {
 }
 '''
 
-# stap toevoegen variabelen
+# Mutation to add heart rate
+voegHartslagToe = '''
+mutation AddHartslag($hartslag: Int!, $cookie: String!) {
+    hartslag(hartslag: $hartslag, cookie: $cookie) {
+        code
+        message
+    }
+}
+'''
+
+# Step count variables
 variablesStap = {
     'aantalStappen': 1,
+    'cookie': cookie
+}
+
+# Heart rate variables
+variablesHartslag = {
+    'hartslag': 80,
     'cookie': cookie
 }
 
 totaalStap = 0
 cacheStap = 0
 
+url = 'http://localhost:7071/api/graphql'
+headers = {'Content-Type': 'application/json'}
 
 def send_data():
     global totaalStap, cacheStap
     while True:
-        # create a random x, y, z value between 0 and 5
+        # Create random x, y, z values between 0 and 5
         x = random.randint(0, 5)
         y = random.randint(0, 5)
         z = random.randint(0, 5)
-        # print the x, y, z values
+        # Print the x, y, z values
         print('x = {0:0.3f}G'.format(x))
         print('y = {0:0.3f}G'.format(y))
         print('z = {0:0.3f}G'.format(z))
 
-        # calculate the length
+        # Calculate the length
         length = math.sqrt(x*x + y*y + z*z)
-        # if the length is greater than 2 a step has been taken
+        # If the length is greater than 2, a step has been taken
         if length > 2:
             totaalStap += 1
-            # send the step count to the server
+            # Send the step count to the server
             variablesStap['aantalStappen'] = totaalStap - cacheStap
             result = client.execute(voegStapToe, variablesStap)
             print('this is the result')
             print(result)
             if result is None:
-                # if the server does not respond cache the step count
+                # If the server does not respond, cache the step count
                 cacheStap += 1
             else:
-                # if the server responds reset the cached step count
+                # If the server responds, reset the cached step count
                 cacheStap = 0
-        time.sleep(1)
+
+            # Send the heart rate data to the server
+            queryHartslag = '''
+            mutation AddHartslag($hartslag: Int!, $cookie: String!) {
+              hartslag(hartslag: $hartslag, cookie: $cookie) {
+                code
+                message
+              }
+            }
+            '''
+            variablesHartslag['hartslag'] = 80  # Set the heart rate value
+            variablesHartslag['cookie'] = cookie  # Set the cookie value
+
+            dataHartslag = {'query': queryHartslag, 'variables': variablesHartslag}
+            
+            response = requests.post(url, headers=headers, data=json.dumps(dataHartslag))
+            print(response.json()['data'])
+
+            time.sleep(1)
 
 
-# start the thread to send the data
+# Start the thread to send the data
 thread = threading.Thread(target=send_data)
 thread.start()
 
-# wait for the thread to finish
+# Wait for the thread to finish
 thread.join()

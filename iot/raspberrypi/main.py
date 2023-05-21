@@ -1,81 +1,150 @@
-# MMA8451 OVERHEATING ISSUES, MISSCHIEN DOOR SHORTCIRCUIT
-
-# to use this code you need to install the following libraries:
-# pip install graphqlclient
-# pip install adafruit-circuitpython-mma8451
-
-# the code:
-import threading
-import board
-import busio
-import adafruit_mma8451
+import json
 import time
+import network
+import urequests
+import random
 import math
-from graphqlclient import GraphQLClient
+from machine import Pin
 
-# Create an I2C bus object
-i2c = busio.I2C(board.SCL, board.SDA)
+SSID = "Cryo_guest"
+PASSWORD = "H0tt3nt0t"
+wlan = network.WLAN(network.STA_IF)
 
-# Create an MMA8451 object
-mma = adafruit_mma8451.MMA8451(i2c)
+print("SSID + PASSWORD ingevuld")
 
-# create cashe for steps
-stepCashe = 0
+wlan.active(True)
+wlan.connect(SSID, PASSWORD)
+print("WLAN connectie gemaakt")
 
-# graphgl client
-client = GraphQLClient('https://schoolmoettestdomeinenhebben.nl/graphql')
+while wlan.isconnected() == False:
+    print('Waiting for connection...')
+    time.sleep(1)
+print('Connected to WiFi!')
 
-mutation = '''
-mutation AddStap($aantalStappen: Int!, $cookie: String!) {
-    stappen(aantalStappen: $aantalStappen, cookie: $cookie) {
-        status
-        message
-    }
+url = 'https://schoolmoettestdomeinenhebben.nl/graphql'
+headers = {'Content-Type': 'application/json'}
+query = '''
+query{
+    login(username: "azertycho", password: "123") 
 }
 '''
+variables = {'cookie': 'my-cookie'}
+data = {'query': query, 'variables': variables}
 
-variables = {
-    'aantalStappen': 1,
-    'cookie': 'my-cookie'
-}
+print('Sending request...')
+response = urequests.post(url, headers=headers, data=json.dumps(data))
+login = response.json()['data']['login']
 
-total_steps = 0
-cache_steps = 0
+print('Cookie: ' + login)
 
-def send_data():
-    global total_steps, cache_steps
-    while True:
-        # get the x, y, z values
-        x, y, z = mma.acceleration
+while True:
+    print('Sending request...')
+    try:
+        # Mutation to add step count
+        voegStapToe = '''
+        mutation AddStap($aantalStappen: Int!, $cookie: String!) {
+            stappen(aantalStappen: $aantalStappen, cookie: $cookie) {
+                code
+                message
+            }
+        }
+        '''
+
+        # stap varriabelen
+        variablesStap = {
+            'aantalStappen': 1,
+            'cookie': login
+        }
+
+        totaalStap = 0
+        cacheStap = 0
+
+        # create a random x, y, z value between 0 and 5
+        x = random.randint(0, 5)
+        y = random.randint(0, 5)
+        z = random.randint(0, 5)
         # print the x, y, z values
         print('x = {0:0.3f}G'.format(x))
         print('y = {0:0.3f}G'.format(y))
         print('z = {0:0.3f}G'.format(z))
 
-        lenght = math.sqrt(x*x + y*y + z*z)
-        print('lenght = {0:0.3f}G'.format(lenght))
+        # calculate the length
+        length = math.sqrt(x*x + y*y + z*z)
+        # if the length is greater than 2 a step has been taken
+        if length > 2:
+            totaalStap += 1
+            # send the step count to the server
+            response = urequests.post(url, headers=headers, data=json.dumps(data))
 
-        # # calculate the length
-        # length = math.sqrt(x*x + y*y + z*z)
-        # # if the length is greater than 2 a step has been taken
-        # if length > 2:
-        #     total_steps += 1
-        #     # send the step count to the server
-        #     variables['aantalStappen'] = total_steps - cache_steps
-        #     result = client.execute(mutation, variables)
-        #     print('this is the result')
-        #     print(result)
-        #     if result is None:
-        #         # if the server does not respond cache the step count
-        #         cache_steps += 1
-        #     else:
-        #         # if the server responds reset the cached step count
-        #         cache_steps = 0
-        time.sleep(1)
+        # Mutation to add heart rate
+        voegHartslagToe = '''
+        mutation AddHartslag($hartslag: Int!, $cookie: String!) {
+            hartslag(hartslag: $hartslag, cookie: $cookie) {
+                code
+                message
+            }
+        }
+        '''
 
-# start the thread to send the data
-thread = threading.Thread(target=send_data)
-thread.start()
+        # hartslag varriabelen
+        variablesHartslag = {
+            'hartslag': 0,
+            'cookie': login
+        }
 
-# wait for the thread to finish
-thread.join()
+        # Set up GPIO for PulseSensor
+        PulseSensorPin = Pin(4, Pin.IN)
+
+        Threshold = 500
+
+        def calculate_average_bpm(beats, duration):
+            if duration == 0:
+                return 0
+
+            average_bpm = (beats / duration) * 60
+            return int(average_bpm)
+
+        def send_data():
+            global totaalStap, cacheStap
+            start_time = time.time()
+            beats = 0
+            while True:
+                # Read the PulseSensor value
+                Signal = PulseSensorPin.value()
+
+                # Print signal
+                print("Signal: " + str(Signal))
+
+                # If the signal is above the threshold, increment beat count
+                if Signal > Threshold:
+                    print("Heartbeat detected!")
+                    beats += 1
+
+                # Calculate duration in seconds
+                duration = time.time() - start_time
+
+                # If the duration exceeds a minute, calculate average beats per minute
+                if duration >= 60:
+                    average_bpm = calculate_average_bpm(beats, duration)
+                    print("Average Beats Per Minute: ", average_bpm)
+
+                    # Reset variables
+                    start_time = time.time()
+                    beats = 0
+
+                    # Update the heart rate value
+                    variablesHartslag['hartslag'] = average_bpm
+
+                    print('Hartslag: ' + str(average_bpm))
+
+                    # Send the heart rate data to the server
+                    response = urequests.post(url, headers=headers, data=json.dumps(data))
+                    print('Response: ' + str(response.text))
+                    print('Heart rate data sent to server!')
+                    break
+
+
+    except OSError as e:
+        print('Error: ' + str(e))
+
+    time.sleep(1)
