@@ -105,44 +105,42 @@ while True:
             return int(average_bpm)
 
         def send_data():
-            global totaalStap, cacheStap
             start_time = time.time()
             beats = 0
-            while True:
-                # Read the PulseSensor value
-                Signal = PulseSensorPin.value()
+            # Read the PulseSensor value
+            Signal = PulseSensorPin.value()
 
-                # Print signal
-                print("Signal: " + str(Signal))
+            # Print signal
+            print("Signal: " + str(Signal))
 
-                # If the signal is above the threshold, increment beat count
-                if Signal > Threshold:
-                    print("Heartbeat detected!")
-                    beats += 1
+            # If the signal is above the threshold, increment beat count
+            if Signal > Threshold:
+                print("Heartbeat detected!")
+                beats += 1
 
-                # Calculate duration in seconds
-                duration = time.time() - start_time
+            # Calculate duration in seconds
+            duration = time.time() - start_time
 
-                # If the duration exceeds a minute, calculate average beats per minute
-                if duration >= 60:
-                    average_bpm = calculate_average_bpm(beats, duration)
-                    print("Average Beats Per Minute: ", average_bpm)
+            # If the duration exceeds a minute, calculate average beats per minute
+            if duration >= 60:
+                average_bpm = calculate_average_bpm(beats, duration)
+                print("Average Beats Per Minute: ", average_bpm)
 
-                    # Reset variables
-                    start_time = time.time()
-                    beats = 0
+                # Reset variables
+                start_time = time.time()
+                beats = 0
 
-                    # Update the heart rate value
-                    variablesHartslag['hartslag'] = average_bpm
+                # Update the heart rate value
+                variablesHartslag['hartslag'] = average_bpm
 
-                    print('Hartslag: ' + str(average_bpm))
+                print('Hartslag: ' + str(average_bpm))
 
-                    # Send the heart rate data to the server
-                    response = urequests.post(url, headers=headers, data=json.dumps(data))
-                    print('Response: ' + str(response.text))
-                    print('Heart rate data sent to server!')
-                    break
-
+                # Send the heart rate data to the server
+                response = urequests.post(url, headers=headers, data=json.dumps(data))
+                print('Response: ' + str(response.text))
+                print('Heart rate data sent to server!')
+        
+        send_data()
 
     except OSError as e:
         print('Error: ' + str(e))
