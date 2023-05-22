@@ -21,29 +21,23 @@ export const GET_SPORTSCHEMA = gql`
 // EetSchemaInput
 export const SPORTSCHEMA_INPUTTYPE = gql`
   input EetSchemaInput {
-    maandag: String
-    dinsdag: String
-    woensdag: String
-    donderdag: String
-    vrijdag: String
-    zaterdag: String
-    zondag: String
+    maandag: Int
+    dinsdag: Int
+    woensdag: Int
+    donderdag: Int
+    vrijdag: Int
+    zaterdag: Int
+    zondag: Int
   }
 `;
 
 
 
-export const UPDATE_EETSCHEMA = gql`
-    mutation eetSchema($cookie: String, $eetSchema: eetSchemaInput) {
-       eetSchema(cookie: $cookie, eetSchema: $eetSchema) {
+export const UPDATE_SPORTSCHEMA = gql`
+    mutation sportSchema($cookie: String, $sportSchema: sportSchemaInput) {
+       sportSchema(cookie: $cookie, sportSchema: $sportSchema) {
             code
             message
         }
     }
 `;
-
-// export const CREATE_ACCOUNT = gql`
-//     mutation createAccount($username: String, $geboortedatum: String, $password: String) {
-//         createAccount(username: $username, geboortedatum: $geboortedatum, password: $password)
-//     }
-// `;
