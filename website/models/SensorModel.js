@@ -163,6 +163,23 @@ class Sensor {
     }
   }
 
+  async getSporten(){
+    try {
+      let conn = await this.pool.getConnection();
+      let rows = await conn.query(
+        "SELECT sportID, sport FROM sporten"
+      );
+
+      conn.release();
+
+      console.log(rows);
+
+      return rows;
+    } catch (err) {
+      throw err;
+    }
+  }
+
 /**
  * 
  * @param {*} startDate als string (yyyy-mm-dd)

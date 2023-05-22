@@ -95,6 +95,10 @@ var root = {
     return await Sensor.getSport(sportID);
   },
 
+  sporten: async () => {
+    return await Sensor.getSporten();
+  },
+
   sportSchema: async ({ sportSchema, cookie }) => {
     try {
       let succes = await Account.insertSportSchema(cookie, sportSchema);
