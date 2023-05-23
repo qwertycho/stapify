@@ -14,6 +14,10 @@ export const GET_SPORTSCHEMA = gql`
         zaterdag
         zondag
       }
+    },
+    sporten{
+      sport,
+      sportID
     }
   }
 `;
@@ -31,11 +35,17 @@ export const SPORTSCHEMA_INPUTTYPE = gql`
   }
 `;
 
-
-
 export const UPDATE_SPORTSCHEMA = gql`
-    mutation sportSchema($cookie: String, $sportSchema: sportSchemaInput) {
-       sportSchema(cookie: $cookie, sportSchema: $sportSchema) {
+    mutation sportSchema($cookie: String, $maandag: Int, $dinsdag: Int, $woensdag: Int, $donderdag: Int, $vrijdag: Int, $zaterdag: Int, $zondag: Int) {
+       sportSchema(cookie: $cookie, sportSchema: {
+        maandag: $maandag
+        dinsdag: $dinsdag
+        woensdag: $woensdag
+        donderdag: $donderdag
+        vrijdag: $vrijdag
+        zaterdag: $zaterdag
+        zondag: $zondag
+       }) {
             code
             message
         }
