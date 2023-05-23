@@ -53,6 +53,15 @@ var schema = buildSchema(`
         zondag: Int
     }
 
+    type sportType {
+        sportID: Int,
+        sport: String,
+    }
+
+    type sportenType{
+        sporten: [sportType]
+    }
+
     type eetSType {
         maandag: String,
         dinsdag: String,
@@ -94,6 +103,7 @@ var schema = buildSchema(`
         myAccount(cookie: String): MyAccountType
         login(username: String, password: String): String
         sport(sportID: Int): String
+        sporten: [sportType]
         stapRange(cookie: String, start: String, end: String): [StappenType]
         cookie(cookie: String): Boolean
     }
