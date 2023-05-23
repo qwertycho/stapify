@@ -27,7 +27,6 @@ def get_heartbeat():
     # If the signal is above the threshold, increment beat count
     if Signal > Threshold:
         print("Heartbeat detected!")
-        beats += 1
 
         # Calculate duration in seconds
         duration = time.time() - start_time
@@ -40,6 +39,8 @@ def get_heartbeat():
         if duration >= 60:
             average_bpm = calculate_average_bpm(beats, duration)
             print("Average Beats Per Minute: ", average_bpm)
+
+            start_time = time.time()
 
 
 # Reset variables

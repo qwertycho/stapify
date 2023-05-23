@@ -72,11 +72,7 @@ variablesHartslag = {
     'cookie': login
 }
 
-# Set up GPIO for PulseSensor
-PulseSensorPin = Pin(26, Pin.IN)
-
-Threshold = 0
-
+beats = 0
 
 # Set up GPIO for PulseSensor
 PulseSensorPin = machine.ADC(26)
