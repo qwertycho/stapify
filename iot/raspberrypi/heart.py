@@ -48,4 +48,4 @@ beats = 0
 
 
 while True:
-    send_data()
+    get_heartbeat()
