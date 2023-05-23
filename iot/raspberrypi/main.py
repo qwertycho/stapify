@@ -84,6 +84,25 @@ PulseSensorPin = machine.ADC(26)
 Threshold = 1000
 
 
+def create_stap():
+    # create a random x, y, z value between 0 and 5
+    x = random.randint(0, 5)
+    y = random.randint(0, 5)
+    z = random.randint(0, 5)
+    # print the x, y, z values
+    print('x = {0:0.3f}G'.format(x))
+    print('y = {0:0.3f}G'.format(y))
+    print('z = {0:0.3f}G'.format(z))
+
+    # calculate the length
+    length = math.sqrt(x*x + y*y + z*z)
+    print('length = {0:0.3f}G'.format(length))
+
+    # if the length is greater than 2 a step has been taken
+    if length > 2:
+        totaalStap += 1
+
+
 def calculate_average_bpm(beats, duration):
     if duration == 0:
         return 0
@@ -93,9 +112,7 @@ def calculate_average_bpm(beats, duration):
     return average_bpm
 
 
-def send_data():
-    start_time = time.time()
-    beats = 0
+def get_heartbeat():
     # Read the PulseSensor value
     Signal = PulseSensorPin.read_u16()
 
@@ -119,40 +136,29 @@ def send_data():
             average_bpm = calculate_average_bpm(beats, duration)
             print("Average Beats Per Minute: ", average_bpm)
 
-            # send heart rate to database
-            variablesHartslag['hartslag'] = average_bpm
-            dataHartslag = {'query': voegHartslagToe,
-                            'variables': variablesHartslag}
-            responseHartslag = urequests.post(
-                url, headers=headers, data=json.dumps(dataHartslag))
-            print(responseHartslag.json())
+            # Reset variables
+            start_time = time.time()
+            beats = 0
 
-    # Reset variables
-    start_time = time.time()
-    beats = 0
+            return average_bpm
+
+
+def send_data(average_bpm):
+    # send heart rate to database
+    variablesHartslag['hartslag'] = average_bpm
+    dataHartslag = {'query': voegHartslagToe,
+                    'variables': variablesHartslag}
+    responseHartslag = urequests.post(
+        url, headers=headers, data=json.dumps(dataHartslag))
+    print(responseHartslag.json())
 
 
 while True:
     print('Sending request...')
     try:
-        # create a random x, y, z value between 0 and 5
-        x = random.randint(0, 5)
-        y = random.randint(0, 5)
-        z = random.randint(0, 5)
-        # print the x, y, z values
-        print('x = {0:0.3f}G'.format(x))
-        print('y = {0:0.3f}G'.format(y))
-        print('z = {0:0.3f}G'.format(z))
-
-        # calculate the length
-        length = math.sqrt(x*x + y*y + z*z)
-        print('length = {0:0.3f}G'.format(length))
-
-        # if the length is greater than 2 a step has been taken
-        if length > 2:
-            totaalStap += 1
-
-        send_data()
+        create_stap()
+        average_bpm = get_heartbeat()
+        send_data(average_bpm)
 
     except OSError as e:
         print('Error: ' + str(e))

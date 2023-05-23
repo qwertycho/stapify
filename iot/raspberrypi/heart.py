@@ -17,9 +17,7 @@ def calculate_average_bpm(beats, duration):
     return average_bpm
 
 
-def send_data():
-    start_time = time.time()
-    beats = 0
+def get_heartbeat():
     # Read the PulseSensor value
     Signal = PulseSensorPin.read_u16()
 
