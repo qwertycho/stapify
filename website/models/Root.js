@@ -91,6 +91,10 @@ var root = {
     } 
   },
 
+    hartRange: async ({ start, end, cookie }) => {
+    return await Sensor.getHartRange(start, end, cookie);
+  },
+
   sport: async ({ sportID }) => {
     return await Sensor.getSport(sportID);
   },

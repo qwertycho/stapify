@@ -105,6 +105,7 @@ var schema = buildSchema(`
         sport(sportID: Int): String
         sporten: [sportType]
         stapRange(cookie: String, start: String, end: String): [StappenType]
+        hartRange(cookie: String, start: String, end: String): [hartslagType]
         cookie(cookie: String): Boolean
     }
 

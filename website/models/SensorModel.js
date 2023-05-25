@@ -221,6 +221,39 @@ class Sensor {
     }
   }
 
+  async getHartRange(startDate, endDate, cookie) {
+    let accountID = await this.checkCookie(cookie);
+    if (accountID) {
+      try {
+
+        let conn = await this.pool.getConnection();
+        let rows = await conn.query(
+          "SELECT dateTime, waarde FROM hartslagen WHERE dateTime BETWEEN ? AND ? AND accountID = ?",
+          [startDate, endDate, accountID]
+        );
+
+        conn.release();
+
+        let ray = [];
+
+        for (let i = 0; i < rows.length; i++) {
+          let obj = {
+            tijd: rows[i].dateTime,
+            hartslag: rows[i].waarde,
+          };
+          ray.push(obj);
+        }
+
+        return ray;
+
+      } catch (err) {
+        throw err;
+      }
+    } else {
+      return false;
+    }
+  }
+
 }
 
 module.exports = Sensor;
