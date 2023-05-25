@@ -25,7 +25,7 @@ class Accounts {
       if (rows.length > 0) {
         return rows[0].accountID;
       } else {
-        return false;
+        throw "Cookie not found";
       }
   }
 
@@ -56,28 +56,20 @@ class Accounts {
   }
 
   async getbmi(id) {
-      console.log("getbmi");
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT waarde AS bmi, dateTime as tijd FROM bmi WHERE accountID = ? ORDER BY dateTime DESC LIMIT 1",
         [id]
       );
-
-      console.log(rows);
-
       conn.release();
 
       let bmi;
 
       if(rows.length == 0) {
-        console.log("geen bmi");
         bmi = new BMI.BMI(0, new Date());
-        // console.log(bmi);
       } else {
         bmi = new BMI.BMI(rows[0].bmi, new Date());
       }
-
-      console.log(bmi.bmi);
 
       return bmi;
   }
@@ -146,8 +138,6 @@ class Accounts {
 
   async getMyAccount(cookie) {
     let accountID = await this.checkCookie(cookie);
-    if (accountID) {
-      try {
         let conn = await this.pool.getConnection();
         let rows = await conn.query(
           "SELECT * FROM accounts WHERE accountID = ?",
@@ -155,15 +145,12 @@ class Accounts {
         );
         conn.release();
         let bmi = await this.getbmi(accountID);
-        // console.log("bmi: " + bmi);
         let stappen = await this.getStappen(accountID);
         let sportSchema = await this.SchemaModel.getSchema(accountID);
         let account = rows[0];
         let eetSchema = await this.SchemaModel.getEetSchema(accountID);
         let hartslag = await this.getHartslag(accountID);
         let lengte = await this.getLengte(accountID);
-
-        console.log("lengte: " + lengte);
 
         let MA = new myAccount(
           accountID, 
@@ -179,13 +166,6 @@ class Accounts {
           );
 
         return MA;
-
-      } catch (err) {
-        throw err;
-      }
-    } else {
-      return false;
-    }
   }
 
   /**
@@ -234,7 +214,6 @@ class Accounts {
    * Login functie die een cookie genereert en opslaat in de database
    */
   async login(username, password) {
-    try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT username, wachtwoord FROM accounts WHERE username = ?",
@@ -253,18 +232,14 @@ class Accounts {
         if(result) {
            return await this.createCookie(username);
         } else {
-          return false;
+          throw new Error("Wachtwoord is incorrect");
         }
       }
-    } catch (err) {
-      throw err;
-    }
   }
 
   async createAccount(username, password, geboortedatum) {
-    if (username == "" || password == "" || geboortedatum == "") return false;
+    if (username == "" || password == "" || geboortedatum == "") throw new Error("Vul alle velden in");
 
-    try {
       let conn = await this.pool.getConnection();
       let account = await conn.query(
         "SELECT accountID FROM accounts WHERE username = ?",
@@ -284,9 +259,6 @@ class Accounts {
         conn.release();
         return false;
       }
-    } catch (err) {
-      throw err;
-    }
   }
 
 /**
@@ -297,31 +269,13 @@ class Accounts {
  * sportSChema is een object met maandag t/m zondag en elke dag is een int FK naar sporten
  */
   async insertSportSchema(cookie, sportSchema) {
-    try{
       let accountID = await this.checkCookie(cookie);
-      console.log(sportSchema);
-      if (accountID) {
-        return await this.SchemaModel.insertSchema(accountID, sportSchema);
-      } else {
-        return false;
-      }
-    } catch (err) {
-      throw err;
-    }
+      return await this.SchemaModel.insertSchema(accountID, sportSchema);
   }
 
   async insertEetSchema(cookie, eetSchema) {
-    try{
       let accountID = await this.checkCookie(cookie);
-      console.log(eetSchema);
-      if (accountID) {
-        return await this.SchemaModel.insertEetSchema(accountID, eetSchema);
-      } else {
-        return false;
-      }
-    } catch (err) {
-      throw err;
-    }
+      return await this.SchemaModel.insertEetSchema(accountID, eetSchema);
   }
 
 

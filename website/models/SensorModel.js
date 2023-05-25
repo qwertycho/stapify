@@ -34,7 +34,6 @@ class Sensor {
   }
 
   async checkCookie(cookie) {
-    try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT accountID FROM cookies WHERE token = ? AND date > NOW()",
@@ -45,11 +44,9 @@ class Sensor {
       if (rows.length > 0) {
         return rows[0].accountID;
       } else {
-        return false;
+        throw "Cookie not found";
       }
-    } catch (err) {
-      throw err;
-    }
+
   }
 
 /**
@@ -64,8 +61,6 @@ class Sensor {
  */
   async insertStappen(aantalStappen, cookie) {
     let accountID = await this.checkCookie(cookie);
-    if (accountID) {
-      try {
         let conn = await this.pool.getConnection();
         let dateTime = this.getCurrentTime();
         let rows = await conn.query(
@@ -76,38 +71,21 @@ class Sensor {
         conn.release();
 
         return true;
-      } catch (err) {
-        throw err;
-      }
-    } else {
-      return false;
-    }
   }
 
   async insertLengte(lengte, cookie) {
     let accountID = await this.checkCookie(cookie);
-    if (accountID) {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "INSERT INTO lengtes (waarde, accountID) VALUES (?, ?)",
         [lengte, accountID]
       );
-
       conn.release();
-
       return true;
-
-    } else {
-
-      return false;
-
-    }
   }
 
   async insertBMI(bmi, cookie) {
     let accountID = await this.checkCookie(cookie);
-    if (accountID) {
-      try {
         let conn = await this.pool.getConnection();
         let rows = await conn.query(
           "INSERT INTO bmi (waarde, accountID) VALUES (?, ?)",
@@ -117,18 +95,10 @@ class Sensor {
         conn.release();
 
         return true;
-      } catch (err) {
-        throw err;
-      }
-    } else {
-      return false;
-    }
   }
 
   async insertHartslag(hartslag, cookie) {
     let accountID = await this.checkCookie(cookie);
-    if (accountID) {
-      try {
         let conn = await this.pool.getConnection();
         let dateTime = this.getCurrentTime();
         let rows = await conn.query(
@@ -139,16 +109,9 @@ class Sensor {
         conn.release();
 
         return true;
-      } catch (err) {
-        throw err;
-      }
-    } else {
-      return false;
-    }
   }
 
   async getSport(sportID){
-    try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT sport FROM sporten WHERE sportID = ?",
@@ -158,26 +121,16 @@ class Sensor {
       conn.release();
 
       return rows[0].sport;
-    } catch (err) {
-      throw err;
-    }
   }
 
   async getSporten(){
-    try {
       let conn = await this.pool.getConnection();
       let rows = await conn.query(
         "SELECT sportID, sport FROM sporten"
       );
-
       conn.release();
 
-      console.log(rows);
-
       return rows;
-    } catch (err) {
-      throw err;
-    }
   }
 
 /**
@@ -190,8 +143,6 @@ class Sensor {
  */
   async getStapRange(startDate, endDate, cookie) {
     let accountID = await this.checkCookie(cookie);
-    if (accountID) {
-      try {
 
         let conn = await this.pool.getConnection();
         let rows = await conn.query(
@@ -210,14 +161,34 @@ class Sensor {
           };
           ray.push(obj);
         }
+        return ray;
+  }
+
+  async getHartRange(startDate, endDate, cookie) {
+    let accountID = await this.checkCookie(cookie);
+    if (accountID) {
+        let conn = await this.pool.getConnection();
+        let rows = await conn.query(
+          "SELECT dateTime, waarde FROM hartslagen WHERE dateTime BETWEEN ? AND ? AND accountID = ?",
+          [startDate, endDate, accountID]
+        );
+
+        conn.release();
+
+        let ray = [];
+
+        for (let i = 0; i < rows.length; i++) {
+          let obj = {
+            tijd: rows[i].dateTime,
+            hartslag: rows[i].waarde,
+          };
+          ray.push(obj);
+        }
 
         return ray;
 
-      } catch (err) {
-        throw err;
-      }
     } else {
-      return false;
+      throw new Error("Invalid cookie");
     }
   }
 
