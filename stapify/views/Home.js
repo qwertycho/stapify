@@ -19,9 +19,6 @@ const Home = props => {
   const navigeerStappen = () => {
     props.navigation.navigate('Stappen');
   };
-  const navigeerProfiel = () => {
-    props.navigation.navigate('Profiel');
-  };
   const navigeerHartslagen = () => {
     props.navigation.navigate('Hartslag');
   };

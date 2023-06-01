@@ -11,10 +11,10 @@ import {
 
 import { ApolloError, useMutation, useQuery } from '@apollo/client';
 import { getCookie } from '../models/Cookie';
-import { CHECK_COOKIE } from '../graphs/Login';
 import {
     LOGIN,
-    GET_USERDATA
+    GET_USERDATA,
+    CHECK_COOKIE,
 } from '../graphs/Login';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
@@ -22,6 +22,7 @@ export default function Profiel() {
     const [cookie, setCookie] = React.useState('');
     const [TempCookie, setTempCookie] = React.useState('');
     const [status, setStatus] = React.useState('');
+    const [account, setAccount] = React.useState(null);
 
     useEffect(() => {
         async function fetchData() {
@@ -31,7 +32,6 @@ export default function Profiel() {
         fetchData();
     }, []);
 
-    console.log(TempCookie);
 
     // controleren of de cookie nog geldig is
     const { Cloading, Cerror, Cdata } = useQuery(CHECK_COOKIE, {
@@ -46,11 +46,30 @@ export default function Profiel() {
         },
     });
 
+    // er word een check gedaan of de cookie leeg is
+    // fetchPolicy: 'no-cache' zorgt ervoor dat de data niet wordt opgeslagen in de cache
+    // zo word er altijd een nieuwe query gedaan
+    const { loading, error, data } = useQuery(GET_USERDATA, {
+        variables: { cookie: cookie },
+        skip: cookie === '',
+        fetchPolicy: 'no-cache',
+        onCompleted: data => {
+            if (data.myAccount.username === null) {
+                setStatus('Geen account');
+                setAccount(null);
+            } else {
+                setStatus('Account gevonden');
+                setAccount(data.myAccount);
+            }
+        },
+    });
+    
+
     return (
         <ScrollView>
 
             <Text style={styles.item}>Status: {status}</Text>
-            {/*             
+    
             <View style={styles.container}>
                 <Text style={styles.item}>Gebruikersnaam: {account?.username}</Text>
                 <Text style={styles.item}>Geboortedatum: {account?.geboortedatum}</Text>
@@ -97,7 +116,7 @@ export default function Profiel() {
                     style={styles.button}>
                     <Text style={styles.text}>Opslaan</Text>
                 </TouchableOpacity>
-            </View> */}
+            </View> 
         </ScrollView>
     );
 }

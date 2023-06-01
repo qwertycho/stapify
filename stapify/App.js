@@ -31,7 +31,7 @@ const App = () => {
         <StatusBar barStyle="dark-content" hidden />
         <NavigationContainer>
           <Stack.Navigator
-            //default screen is de inlog pagina, maar voor testen is de home pagina default
+            //default screen is de inlog pagina, zodat je alleen de app ingelogd kunt gebruiken
             initialRouteName="Inlog"
             //Zorgt ervoor dat er geen header is op default pagina
             options={{
