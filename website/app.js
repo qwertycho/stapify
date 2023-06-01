@@ -14,9 +14,6 @@ dotenv.config();
 const port = process.env.PORT || 3001;
 let pool = require("./models/Database");
 
-// routers
-const IndexRouter = require("./routes/Index");
-
 // Test database connection
 pool
   .getConnection()
@@ -43,8 +40,6 @@ app.use(
     graphiql: true,
   })
 );
-
-app.use("/", IndexRouter);
 
 app.listen(port, () => {
   console.log(`Listening on http://localhost:${port}`);

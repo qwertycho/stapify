@@ -9,47 +9,66 @@ const Sensor = new SensorModel(pool);
 
 var root = {
   accounts: async () => {
-    return await Account.getAccounts();
+    try {
+      return await Account.getAccounts();
+    } catch (err) {
+      return { code: 500, message: err };
+    }
   },
   account: async ({ username }) => {
-    return await Account.getAccount(username);
+    try {
+      return await Account.getAccount(username);
+    } catch (err) {
+      return { code: 500, message: err };
+    }
   },
   login: async ({ username, password }) => {
-    return await Account.login(username, password);
+    try {
+      return await Account.login(username, password);
+    } catch (err) {
+      return { code: 500, message: err };
+    }
   },
 
   createAccount: async ({ username, password, geboortedatum }) => {
-    return await Account.createAccount(username, password, geboortedatum);
+    try {
+      return await Account.createAccount(username, password, geboortedatum);
+    } catch (err) {
+      return err;
+    }
   },
 
   myAccount: async ({ cookie }) => {
-    return await Account.getMyAccount(cookie);
+    try {
+      return await Account.getMyAccount(cookie);
+    } catch (err) {
+      return { code: 500, message: err };
+    }
   },
 
   cookie: async ({ cookie }) => {
-    let account = await Account.checkCookie(cookie);
-    if (account) {
-      return true;
-    } else {
-      return false;
+    try {
+      return await Account.checkCookie(cookie);
+    } catch (err) {
+      return { code: 500, message: err };
     }
   },
 
   stappen: async ({ aantalStappen, cookie }) => {
     try {
       let succes = await Sensor.insertStappen(aantalStappen, cookie);
-      if (succes) {
-        return { code: 200, message: "Stappen toegevoegd" };
-      } else {
-        return { code: 500, message: "Inlog fout" };
-      }
+      return { code: 200, message: "Stappen toegevoegd" };
     } catch (err) {
       return { code: 500, message: err };
     }
   },
 
   stapRange: async ({ start, end, cookie }) => {
-    return await Sensor.getStapRange(start, end, cookie);
+    try {
+      return await Sensor.getStapRange(start, end, cookie);
+    } catch (err) {
+      return [{ code: 500, message: err }];
+    }
   },
 
   bmi: async ({ bmi, cookie }) => {
@@ -80,19 +99,35 @@ var root = {
 
   hartslag: async ({ hartslag, cookie }) => {
     try {
-      let succes = await Sensor.insertHartslag(hartslag, cookie);
-      if (succes) {
-        return { code: 200, message: "Hartslag toegevoegd" };
-      } else {
-        return { code: 500, message: "Inlog fout" };
-      }
+      await Sensor.insertHartslag(hartslag, cookie);
+      return { code: 200, message: "Hartslag toegevoegd" };
     } catch (err) {
       return { code: 500, message: err };
-    } 
+    }
+  },
+
+  hartRange: async ({ start, end, cookie }) => {
+    try {
+      return await Sensor.getHartRange(start, end, cookie);
+    } catch (err) {
+      return [{ code: 500, message: err }];
+    }
   },
 
   sport: async ({ sportID }) => {
-    return await Sensor.getSport(sportID);
+    try {
+      return await Sensor.getSport(sportID);
+    } catch (err) {
+      return { code: 500, message: err };
+    }
+  },
+
+  sporten: async () => {
+    try {
+      return await Sensor.getSporten();
+    } catch (err) {
+      return [{ code: 500, message: err }];
+    }
   },
 
   sportSchema: async ({ sportSchema, cookie }) => {
@@ -120,7 +155,6 @@ var root = {
       return { code: 500, message: err };
     }
   },
-
 };
 
 module.exports = root;
