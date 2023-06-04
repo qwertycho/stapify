@@ -72,15 +72,20 @@ variablesHartslag = {
     'cookie': login
 }
 
-beats = 0
-
 # Set up GPIO for PulseSensor
 PulseSensorPin = machine.ADC(26)
 
-Threshold = 1000
+Threshold = 900
+
+start_time = time.time()
+
+beats = 0
 
 
 def create_stap():
+    global totaalStap
+    global cacheStap
+
     # create a random x, y, z value between 0 and 5
     x = random.randint(0, 5)
     y = random.randint(0, 5)
@@ -100,28 +105,35 @@ def create_stap():
 
 
 def calculate_average_bpm(beats, duration):
-    if duration == 0:
-        return 0
-
+    # print a message to the console
+    print("calculating average bpm")
     # Calculate average beats per minute
     average_bpm = beats / duration * 60
+
+    # make the bpm an int
+    average_bpm = int(average_bpm)
+
     return average_bpm
 
 
 def get_heartbeat():
+    global beats
+    global start_time
+
     # Read the PulseSensor value
     Signal = PulseSensorPin.read_u16()
-
-    # Print signal
-    print("Signal: " + str(Signal))
 
     # If the signal is above the threshold, increment beat count
     if Signal > Threshold:
         print("Heartbeat detected!")
+
         beats += 1
 
         # Calculate duration in seconds
         duration = time.time() - start_time
+
+        print("duration: ", duration)
+        print("beats: ", beats)
 
         while Signal > Threshold:
             # wait for the signal to drop below the threshold
@@ -132,7 +144,6 @@ def get_heartbeat():
             average_bpm = calculate_average_bpm(beats, duration)
             print("Average Beats Per Minute: ", average_bpm)
 
-            # Reset variables
             start_time = time.time()
             beats = 0
 
