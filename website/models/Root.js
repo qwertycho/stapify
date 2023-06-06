@@ -160,12 +160,11 @@ var root = {
     try{
       
       let now = new Date()
-      let sD = now.getDate()
       let sM = now.getMonth() + 1
       let sJ = now.getFullYear()
 
-      let startDate = new Date(`${sD}-${sM}-${sJ}`);
-      let endDate = new Date(`${sD}-${sM+1}-${sJ}`)
+      let startDate = new Date(`${sJ}-${sM}-01`);
+      let endDate = new Date(`${sJ}-${sM + 1}-01`)
 
       if(start != ""){
         startDate = new Date(start)
