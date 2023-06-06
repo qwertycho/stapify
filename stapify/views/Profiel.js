@@ -24,6 +24,12 @@ export default function Profiel() {
     const [status, setStatus] = React.useState('');
     const [account, setAccount] = React.useState(null);
 
+    const [gewicht, setGewicht] = React.useState('');
+    const [lengte, setLengte] = React.useState('');
+
+
+    const [BMI, setBMI] = React.useState('');
+
     useEffect(() => {
         async function fetchData() {
             const cookie = await getCookie();
@@ -63,60 +69,87 @@ export default function Profiel() {
             }
         },
     });
-    
+
+    const readAbleDate = (date) => {
+        try {
+            //maak de ophehaalde datum echt een nummer
+            let numberDate = Number(date);
+
+            //maak een datum object van het nummer
+            let datumDate = new Date(numberDate);
+
+            //xx - xx - xxxx
+            let datum = datumDate.getDate() + " - " + (datumDate.getMonth() + 1) + " - " + datumDate.getFullYear();
+
+            return datum;
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    const submit = () => {
+        // BMI = gewicht / (lengte * lengte)
+        //gewicht is als de gebruiker het invult in kg
+        //lengte is als de gebruiker het invult in cm (moet nog omgezet worden naar meter)
+        //leeftijd is als de gebruiker het invult al in jaren
+
+        //omzetten van cm naar meter
+        let lengteInMeter = lengte / 100;
+
+        let BMI = gewicht / (lengteInMeter * lengteInMeter);
+
+        //BMI afronden op 2 decimalen
+        BMI = Math.round(BMI * 100) / 100;
+
+
+        let BMIString = BMI.toString();
+
+        return BMIString;
+    }
+
 
     return (
         <ScrollView>
-
             <Text style={styles.item}>Status: {status}</Text>
-    
+
             <View style={styles.container}>
-                <Text style={styles.item}>Gebruikersnaam: {account?.username}</Text>
-                <Text style={styles.item}>Geboortedatum: {account?.geboortedatum}</Text>
-                <Text style={styles.item}>Aanmelddatum: {account?.aanmelddatum}</Text>
+                <Text style={styles.item}>Welkom op jouw profiel, {account?.username}!</Text>
             </View>
 
             <View style={styles.container}>
-                <Text style={styles.item}>BMI: </Text>
+                <Text style={styles.item}>geboortedatum: {readAbleDate(account?.geboortedatum)}</Text>
+
+                <Text style={styles.item}>Aanmelddatum: {readAbleDate(account?.aanmelddatum)}</Text>
             </View>
 
             <View style={styles.container}>
-                <Text style={styles.text}>Wat is uw gewicht?</Text>
+                <Text style={styles.item}>BMI: {BMI}</Text>
+            </View>
+
+            <View style={styles.container}>
+                <Text style={styles.text}>Wat is uw gewicht in kg?</Text>
                 <TextInput
-                    style={styles.item}
+                    style={styles.itemInput}
                     placeholder="0 kg"
                     onChangeText={(gewicht) => setGewicht(gewicht)}
                 />
 
-                <Text style={styles.text}>Wat is uw lengte?</Text>
+                <Text style={styles.text}>Wat is uw lengte in cm?</Text>
                 <TextInput
-                    style={styles.item}
+                    style={styles.itemInput}
                     placeholder="0 cm"
                     onChangeText={(lengte) => setLengte(lengte)}
                 />
 
-                <Text style={styles.text}>Wat is uw leeftijd?</Text>
-                <TextInput
-                    style={styles.item}
-                    placeholder="0 jaar"
-                    onChangeText={(leeftijd) => setLeeftijd(leeftijd)}
-                />
-
-                <Text style={styles.text}>Wat is uw geslacht?</Text>
-                <TextInput
-                    style={styles.item}
-                    placeholder="Geslacht"
-                    onChangeText={(geslacht) => setGeslacht(geslacht)}
-                />
-
                 <TouchableOpacity
                     onPress={() => {
-                        submit();
+                        setBMI(submit());
                     }}
                     style={styles.button}>
                     <Text style={styles.text}>Opslaan</Text>
                 </TouchableOpacity>
-            </View> 
+            </View>
         </ScrollView>
     );
 }
@@ -133,8 +166,22 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10,
         borderRadius: 10,
+        textAlign: "left"
     },
     item: {
+        fontSize: 15,
+        marginBottom: 20,
+    },
+    itemInput: {
+        fontSize: 15,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: "black",
+        borderRadius: 10,
+        padding: 10,
+        width: 200,
+    },
+    text: {
         fontSize: 15,
         marginBottom: 20,
     },
