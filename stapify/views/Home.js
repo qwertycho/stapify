@@ -19,9 +19,6 @@ const Home = props => {
   const navigeerStappen = () => {
     props.navigation.navigate('Stappen');
   };
-  const navigeerProfiel = () => {
-    props.navigation.navigate('Profiel');
-  };
   const navigeerHartslagen = () => {
     props.navigation.navigate('Hartslag');
   };
@@ -70,14 +67,6 @@ const Home = props => {
           </TouchableOpacity>
         </View>
 
-        <View>
-          <TouchableOpacity style={Styles.NavBox} onPress={navigeerProfiel}>
-            <Text style={Styles.title}>profieltje</Text>
-            <Text style={Styles.text}>
-              Klik om naar jouw profieltje te gaan{' '}
-            </Text>
-          </TouchableOpacity>
-        </View>
         <View style={Styles.ruimte}></View>
         <View style={Styles.Menu}>
           <Menu />

@@ -7,14 +7,21 @@ const Menu = () => {
 
     const navigation = useNavigation();
 
+    //Dit is de menu balk die je onderaan de app ziet
     return (
         <View style={Styles.Menu}>
-            {/* TouchableOpacity is een soort button */}
-            <TouchableOpacity
+            <TouchableOpacity 
+            ///Deze moet uiteindelijk natuurlijk weg
             onPress={() => navigation.navigate('Verwerk')}
             style={Styles.Button}
             >
                 <Text style={Styles.ButtonText}>Verwerk</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+            onPress={() => navigation.navigate('Profiel')}
+            style={Styles.Button}
+            >
+                <Text style={Styles.ButtonText}>Profiel</Text>
             </TouchableOpacity>
             <TouchableOpacity
             onPress={() => 

@@ -12,3 +12,15 @@ export const LOGIN = gql`
         login(username: $username, password: $password)
     }
 `;
+
+
+export const GET_USERDATA =
+gql`
+    query myAccount($cookie: String!) {
+        myAccount(cookie: $cookie) {
+           username
+           geboortedatum
+           aanmelddatum
+        }
+    }
+`;
