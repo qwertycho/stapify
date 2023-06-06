@@ -97,7 +97,14 @@ var schema = buildSchema(`
         message: String
     }
 
+    type wedstrijd{
+      accountID: Int,
+      username: String,
+      score: Int
+    }
+
     type Query {
+        wedstrijd(start: String, end: String): [wedstrijd]
         accounts: [AccountType]
         account(username: String): AccountType
         myAccount(cookie: String): MyAccountType
