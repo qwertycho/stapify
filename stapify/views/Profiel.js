@@ -21,9 +21,11 @@ import { ScrollView, TextInput } from 'react-native-gesture-handler';
 export default function Profiel() {
     const [cookie, setCookie] = React.useState('');
     const [TempCookie, setTempCookie] = React.useState('');
-    const [status, setStatus] = React.useState('');
-    const [account, setAccount] = React.useState(null);
 
+    /* Dit was een hulpmiddel voor dev */
+    // const [status, setStatus] = React.useState('');
+
+    const [account, setAccount] = React.useState(null);
     const [gewicht, setGewicht] = React.useState('');
     const [lengte, setLengte] = React.useState('');
 
@@ -47,7 +49,7 @@ export default function Profiel() {
             if (data.cookie === true) {
                 setCookie(TempCookie);
             } else {
-                setStatus('Niet ingelogd');
+                // setStatus('Niet ingelogd');
             }
         },
     });
@@ -61,10 +63,10 @@ export default function Profiel() {
         fetchPolicy: 'no-cache',
         onCompleted: data => {
             if (data.myAccount.username === null) {
-                setStatus('Geen account');
+                // setStatus('Geen account');
                 setAccount(null);
             } else {
-                setStatus('Account gevonden');
+                // setStatus('Account gevonden');
                 setAccount(data.myAccount);
             }
         },
@@ -88,30 +90,84 @@ export default function Profiel() {
         }
     }
 
+    const checkBMI = () => {
+        try {
+            //check of de BMI al is ingevuld
+            if (account?.bmi === null) {
+                console.log("BMI is nog niet ingevuld in de database");
+                return;
+            }
+            else {
+                return account?.bmi;
+            }
+        }
+        catch (err) {
+            console.log(err);
+            return "Er is iets fout gegaan bij het ophalen van de BMI";
+        }
+    }
+
     const submit = () => {
-        // BMI = gewicht / (lengte * lengte)
-        //gewicht is als de gebruiker het invult in kg
-        //lengte is als de gebruiker het invult in cm (moet nog omgezet worden naar meter)
-        //leeftijd is als de gebruiker het invult al in jaren
+        try {
+            //validatie van user input
+            if (gewicht === '') {
+                return "Vul een gewicht in";
+            }
+            if (lengte === '') {
+                return "Vul een lengte in";
+            }
 
-        //omzetten van cm naar meter
-        let lengteInMeter = lengte / 100;
+            console.log(gewicht);
+            console.log(lengte);
 
-        let BMI = gewicht / (lengteInMeter * lengteInMeter);
+            //vervang de komma of spatie voor een punt
+            let floatG = gewicht.replace(",", ".");
+            floatG = floatG.replace(" ", ".");
+            let floatL = lengte.replace(",", ".");
+            setGewicht(floatG);
+            setLengte(floatL);
 
-        //BMI afronden op 2 decimalen
-        BMI = Math.round(BMI * 100) / 100;
+
+            console.log(gewicht);
+            console.log(lengte);
+
+            //maak van de user input een nummer
+            // gewicht = Number(gewicht);
+            // lengte = Number(lengte);
+        }
+        catch (err) {
+            console.log(err);
+            return "Er is iets fout gegaan bij het omzetten van de komma of spatie naar een punt";
+        }
+
+        try {
+            //BMI berekennen = BMI = gewicht / (lengte * lengte)
+            //gewicht is als de gebruiker het invult in kg
+            //lengte is als de gebruiker het invult in cm (moet nog omgezet worden naar meter)
+            //leeftijd is als de gebruiker het invult al in jaren
+            let BMI = Number(gewicht) / ((Number(lengte) / 100) * (Number(lengte) / 100));
+            console.log(BMI + "   1");
+
+            //BMI afronden op 2 decimalen
+            BMI = Math.round(BMI * 100) / 100;
+            console.log(BMI);
 
 
-        let BMIString = BMI.toString();
+            let BMIString = BMI.toString();
 
-        return BMIString;
+            return BMIString;
+        }
+        catch (err) {
+            console.log(err);
+            return "Er is iets fout gegaan bij het berekenen van de BMI";
+        }
     }
 
 
     return (
         <ScrollView>
-            <Text style={styles.item}>Status: {status}</Text>
+            {/* Dit was een hulpmiddel voor dev */}
+            {/* <Text style={styles.item}>Status: {status}</Text> */}
 
             <View style={styles.container}>
                 <Text style={styles.item}>Welkom op jouw profiel, {account?.username}!</Text>
@@ -142,12 +198,16 @@ export default function Profiel() {
                     onChangeText={(lengte) => setLengte(lengte)}
                 />
 
+                <Text style={styles.noteText}>Geen komma's of spaties gebruiken!</Text>
+                <Text style={styles.noteText}>Als BMI "NAN" is, druk dan nog een keer op opslaan</Text>
+
                 <TouchableOpacity
                     onPress={() => {
+                        checkBMI();
                         setBMI(submit());
                     }}
                     style={styles.button}>
-                    <Text style={styles.text}>Opslaan</Text>
+                    <Text>Opslaan</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
@@ -184,5 +244,18 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 15,
         marginBottom: 20,
+    },
+    noteText: {
+        fontSize: 15,
+        marginBottom: 20,
+    },
+    button: {
+        fontSize: 15,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: "black",
+        borderRadius: 10,
+        padding: 10,
+        
     },
 });

@@ -21,6 +21,7 @@ gql`
            username
            geboortedatum
            aanmelddatum
+           bmi
         }
     }
 `;
