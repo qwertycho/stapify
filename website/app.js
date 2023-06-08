@@ -29,8 +29,11 @@ pool
 // Construct a schema, using GraphQL schema language
 var schema = require("./models/Schema");
 
-// // The root provides a resolver function for each API endpoint
+// The root provides a resolver function for each API endpoint
 var root = require("./models/Root");
+
+const AVGController = require("./controllers/AVGController")
+app.use("/avg", AVGController)
 
 app.use(
   "/graphql",
