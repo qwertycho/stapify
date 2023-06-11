@@ -21,6 +21,11 @@ gql`
            username
            geboortedatum
            aanmelddatum
+           bmi {
+             bmi
+             tijd
+           }
+
         }
     }
 `;

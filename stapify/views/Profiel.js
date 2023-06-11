@@ -16,12 +16,19 @@ import {
     GET_USERDATA,
     CHECK_COOKIE,
 } from '../graphs/Login';
+import {
+    Set_BMI
+} from '../graphs/BMI';
+
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
 export default function Profiel() {
     const [cookie, setCookie] = React.useState('');
     const [TempCookie, setTempCookie] = React.useState('');
-    const [status, setStatus] = React.useState('');
+
+    /* Dit was een hulpmiddel voor dev */
+    // const [status, setStatus] = React.useState('');
+
     const [account, setAccount] = React.useState(null);
 
     const [gewicht, setGewicht] = React.useState('');
@@ -47,7 +54,6 @@ export default function Profiel() {
             if (data.cookie === true) {
                 setCookie(TempCookie);
             } else {
-                setStatus('Niet ingelogd');
             }
         },
     });
@@ -61,14 +67,31 @@ export default function Profiel() {
         fetchPolicy: 'no-cache',
         onCompleted: data => {
             if (data.myAccount.username === null) {
-                setStatus('Geen account');
+                // setStatus('Geen account');
                 setAccount(null);
             } else {
-                setStatus('Account gevonden');
+                // setStatus('Account gevonden');
                 setAccount(data.myAccount);
+
+                //BMI ophalen
+                setBMI(data.myAccount.bmi.bmi);
+
             }
         },
     });
+
+    const [updateBMI, { loadingBMI, errorBMI, dataBMI }] = useMutation(
+        Set_BMI,
+        {
+            onCompleted: data => {
+                console.log(data);
+            },
+            onError: error => {
+                Alert.alert('Er is iets fout gegaan');
+                console.log(error);
+            },
+        },
+    );
 
     const readAbleDate = (date) => {
         try {
@@ -88,30 +111,42 @@ export default function Profiel() {
         }
     }
 
-    const submit = () => {
-        // BMI = gewicht / (lengte * lengte)
-        //gewicht is als de gebruiker het invult in kg
-        //lengte is als de gebruiker het invult in cm (moet nog omgezet worden naar meter)
-        //leeftijd is als de gebruiker het invult al in jaren
+    const berekenBMI = (gewicht, lengte) => {
 
-        //omzetten van cm naar meter
-        let lengteInMeter = lengte / 100;
-
-        let BMI = gewicht / (lengteInMeter * lengteInMeter);
-
-        //BMI afronden op 2 decimalen
-        BMI = Math.round(BMI * 100) / 100;
+        setGewicht(gewicht.replace(",", "."));
+        setLengte(lengte.replace(",", "."));
 
 
-        let BMIString = BMI.toString();
+        setGewicht(gewicht.replace(" ", "."));
+        setLengte(lengte.replace(" ", "."));
 
-        return BMIString;
+        gewicht = parseFloat(gewicht);
+        lengte = parseFloat(lengte);
+
+
+        let BMI = gewicht / ((lengte / 100) * (lengte / 100));
+
+        //Maak BMI een Float met 2 decimalen
+        BMI = parseFloat(BMI.toFixed(2));
+
+        //BMI naar de database sturen
+        updateBMI({
+            variables: {
+                cookie: cookie,
+                bmi: BMI,
+            },
+        });
+
+
+        return BMI;
     }
 
 
     return (
         <ScrollView>
-            <Text style={styles.item}>Status: {status}</Text>
+            {/* Dit was een hulpmiddel voor dev */}
+            {/* <Text style={styles.item}>Status: {status}</Text> */}
+
 
             <View style={styles.container}>
                 <Text style={styles.item}>Welkom op jouw profiel, {account?.username}!</Text>
@@ -144,16 +179,17 @@ export default function Profiel() {
 
                 <TouchableOpacity
                     onPress={() => {
-                        setBMI(submit());
+                        //BMI berekenen en daadwerkelijk op de pagina zetten
+                        setBMI(berekenBMI(gewicht, lengte));
                     }}
                     style={styles.button}>
-                    <Text style={styles.text}>Opslaan</Text>
+                    <Text>Opslaan</Text>
+
                 </TouchableOpacity>
             </View>
         </ScrollView>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -184,5 +220,15 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 15,
         marginBottom: 20,
+    },
+    button: {
+        fontSize: 15,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: "black",
+        borderRadius: 10,
+        padding: 10,
+
+
     },
 });
