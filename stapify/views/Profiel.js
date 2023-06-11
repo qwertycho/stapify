@@ -149,7 +149,7 @@ export default function Profiel() {
 
 
             <View style={styles.container}>
-                <Text style={styles.item}>Welkom op jouw profiel, {account?.username}!</Text>
+                <Text style={styles.item}>Welkom op jouw profiel: {account?.username}!</Text>
             </View>
 
             <View style={styles.container}>

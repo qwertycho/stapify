@@ -145,10 +145,7 @@ export default function Sportschema() {
 
   return (
     <ScrollView>
-      <Text>{status}</Text>
-      <Text>Sportschema</Text>
-
-      {schema !== null ? (
+        {schema !== null ? (
         <View style={styles.container}>
           <View style={styles.table}>
             <View style={styles.row}>

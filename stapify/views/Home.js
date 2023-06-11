@@ -35,22 +35,7 @@ const Home = props => {
         <View style={Styles.textcontainer}>
           <Text style={Styles.content}>{introText}</Text>
         </View>
-        <View>
-          <TouchableOpacity style={Styles.NavBox} onPress={navigeerSport}>
-            <Text style={Styles.title}>Sportschema</Text>
-            <Text style={Styles.text}>
-              Klik om naar jouw Sportschema te gaan{' '}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <TouchableOpacity style={Styles.NavBox} onPress={navigeerEten}>
-            <Text style={Styles.title}>Eetschema</Text>
-            <Text style={Styles.text}>
-              Klik om naar jouw Eetschema te gaan{' '}
-            </Text>
-          </TouchableOpacity>
-        </View>
+
         <View>
           <TouchableOpacity style={Styles.NavBox} onPress={navigeerStappen}>
             <Text style={Styles.title}>Stappen</Text>
@@ -63,6 +48,24 @@ const Home = props => {
             <Text style={Styles.title}>Hartslag</Text>
             <Text style={Styles.text}>
               Klik om naar jouw Hartslagen te gaan{' '}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          <TouchableOpacity style={Styles.NavBox} onPress={navigeerSport}>
+            <Text style={Styles.title}>Sportschema</Text>
+            <Text style={Styles.text}>
+              Klik om naar jouw Sportschema te gaan{' '}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          <TouchableOpacity style={Styles.NavBox} onPress={navigeerEten}>
+            <Text style={Styles.title}>Eetschema</Text>
+            <Text style={Styles.text}>
+              Klik om naar jouw Eetschema te gaan{' '}
             </Text>
           </TouchableOpacity>
         </View>
