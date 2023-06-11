@@ -7,7 +7,6 @@ import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
 
 //Components
 import Home from './views/Home';
-import Verwerk from './views/Verwerk';
 import Inlog from './views/Inlog';
 import Register from './views/Register';
 import Sportschema from './views/Sportschema';
@@ -43,13 +42,6 @@ const App = () => {
               //geen header want dat is lelijk
               options={{
                 headerMode: 'false',
-              }}></Stack.Screen>
-            <Stack.Screen
-              name="Verwerk"
-              component={Verwerk}
-              ptions={{
-                headerTitleAlign: 'center',
-                headerTitle: 'Gegevens',
               }}></Stack.Screen>
             <Stack.Screen
               name="Inlog"
