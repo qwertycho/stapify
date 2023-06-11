@@ -101,9 +101,6 @@ export default function Eetschema() {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text style={styles.title}>Eetschema</Text>
-        <Text style={styles.statusText}>{status}</Text>
-
         {/* controleren of niet null */}
         {eetSchema !== null ? (
           <View>
