@@ -16,6 +16,9 @@ import {
     GET_USERDATA,
     CHECK_COOKIE,
 } from '../graphs/Login';
+import {
+    Set_BMI
+} from '../graphs/BMI';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
 export default function Profiel() {
@@ -68,6 +71,11 @@ export default function Profiel() {
             } else {
                 // setStatus('Account gevonden');
                 setAccount(data.myAccount);
+
+                // setBMI(data.myAccount.bmi);
+                console.log("!!!BMI uit de database!!!");
+                console.log(data.myAccount.bmi);
+                console.log("!!!BMI uit de database!!!");
             }
         },
     });
@@ -90,77 +98,24 @@ export default function Profiel() {
         }
     }
 
-    const checkBMI = () => {
-        try {
-            //check of de BMI al is ingevuld
-            if (account?.bmi === null) {
-                console.log("BMI is nog niet ingevuld in de database");
-                return;
-            }
-            else {
-                return account?.bmi;
-            }
-        }
-        catch (err) {
-            console.log(err);
-            return "Er is iets fout gegaan bij het ophalen van de BMI";
-        }
-    }
+    const berekenBMI = (gewicht, lengte) => {
 
-    const submit = () => {
-        try {
-            //validatie van user input
-            if (gewicht === '') {
-                return "Vul een gewicht in";
-            }
-            if (lengte === '') {
-                return "Vul een lengte in";
-            }
-
-            console.log(gewicht);
-            console.log(lengte);
-
-            //vervang de komma of spatie voor een punt
-            let floatG = gewicht.replace(",", ".");
-            floatG = floatG.replace(" ", ".");
-            let floatL = lengte.replace(",", ".");
-            setGewicht(floatG);
-            setLengte(floatL);
+        setGewicht(gewicht.replace(",", "."));
+        setLengte(lengte.replace(",", "."));
 
 
-            console.log(gewicht);
-            console.log(lengte);
+        setGewicht(gewicht.replace(" ", "."));
+        setLengte(lengte.replace(" ", "."));
 
-            //maak van de user input een nummer
-            // gewicht = Number(gewicht);
-            // lengte = Number(lengte);
-        }
-        catch (err) {
-            console.log(err);
-            return "Er is iets fout gegaan bij het omzetten van de komma of spatie naar een punt";
-        }
-
-        try {
-            //BMI berekennen = BMI = gewicht / (lengte * lengte)
-            //gewicht is als de gebruiker het invult in kg
-            //lengte is als de gebruiker het invult in cm (moet nog omgezet worden naar meter)
-            //leeftijd is als de gebruiker het invult al in jaren
-            let BMI = Number(gewicht) / ((Number(lengte) / 100) * (Number(lengte) / 100));
-            console.log(BMI + "   1");
-
-            //BMI afronden op 2 decimalen
-            BMI = Math.round(BMI * 100) / 100;
-            console.log(BMI);
+        gewicht = parseFloat(gewicht);
+        lengte = parseFloat(lengte);
 
 
-            let BMIString = BMI.toString();
+        let BMI = gewicht / ((lengte / 100) * (lengte / 100));
 
-            return BMIString;
-        }
-        catch (err) {
-            console.log(err);
-            return "Er is iets fout gegaan bij het berekenen van de BMI";
-        }
+        BMI = BMI.toFixed(2);
+
+        return BMI;
     }
 
 
@@ -198,13 +153,9 @@ export default function Profiel() {
                     onChangeText={(lengte) => setLengte(lengte)}
                 />
 
-                <Text style={styles.noteText}>Geen komma's of spaties gebruiken!</Text>
-                <Text style={styles.noteText}>Als BMI "NAN" is, druk dan nog een keer op opslaan</Text>
-
                 <TouchableOpacity
                     onPress={() => {
-                        checkBMI();
-                        setBMI(submit());
+                        setBMI(berekenBMI(gewicht, lengte));
                     }}
                     style={styles.button}>
                     <Text>Opslaan</Text>
@@ -245,10 +196,6 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginBottom: 20,
     },
-    noteText: {
-        fontSize: 15,
-        marginBottom: 20,
-    },
     button: {
         fontSize: 15,
         marginBottom: 20,
@@ -256,6 +203,6 @@ const styles = StyleSheet.create({
         borderColor: "black",
         borderRadius: 10,
         padding: 10,
-        
+
     },
 });
