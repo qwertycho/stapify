@@ -155,6 +155,30 @@ var root = {
       return { code: 500, message: err };
     }
   },
+
+  wedstrijd: async ({start, end}) => {
+    try{
+      
+      let now = new Date()
+      let sM = now.getMonth() + 1
+      let sJ = now.getFullYear()
+
+      let startDate = new Date(`${sJ}-${sM}-01`);
+      let endDate = new Date(`${sJ}-${sM + 1}-01`)
+
+      if(start != ""){
+        startDate = new Date(start)
+      }
+      if(end != ""){
+        endDate = new Date(end);
+      }
+
+      return await Account.getWedstrijd(startDate, endDate);
+    } catch(err){
+      console.log(err)
+      return {code: 500, message: err}
+    }
+  },
 };
 
 module.exports = root;

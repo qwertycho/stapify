@@ -25,6 +25,7 @@ gql`
              bmi
              tijd
            }
+
         }
     }
 `;

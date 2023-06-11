@@ -278,8 +278,24 @@ class Accounts {
       return await this.SchemaModel.insertEetSchema(accountID, eetSchema);
   }
 
+  async getWedstrijd(startDate, endDate){
 
-
+      let conn = await this.pool.getConnection();
+      let result = await conn.query(
+        ` SELECT SUM(waarde) as score, accounts.accountID, accounts.username
+          FROM stappen
+          INNER JOIN accounts
+          on accounts.accountID = stappen.accountID
+          WHERE stappen.accountID
+          IN (SELECT DISTINCT stappen.accountID FROM stappen)
+          AND datetime BETWEEN ? AND ?
+          GROUP BY stappen.accountID
+          LIMIT 25 
+        `,
+        [startDate, endDate]
+      );
+    conn.release()
+    return result;
+  }
 }
-
 module.exports = Accounts;

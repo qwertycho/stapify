@@ -19,6 +19,7 @@ import {
 import {
     Set_BMI
 } from '../graphs/BMI';
+
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
 export default function Profiel() {
@@ -29,6 +30,7 @@ export default function Profiel() {
     // const [status, setStatus] = React.useState('');
 
     const [account, setAccount] = React.useState(null);
+
     const [gewicht, setGewicht] = React.useState('');
     const [lengte, setLengte] = React.useState('');
 
@@ -52,7 +54,6 @@ export default function Profiel() {
             if (data.cookie === true) {
                 setCookie(TempCookie);
             } else {
-                // setStatus('Niet ingelogd');
             }
         },
     });
@@ -74,6 +75,7 @@ export default function Profiel() {
 
                 //BMI ophalen
                 setBMI(data.myAccount.bmi.bmi);
+
             }
         },
     });
@@ -145,6 +147,7 @@ export default function Profiel() {
             {/* Dit was een hulpmiddel voor dev */}
             {/* <Text style={styles.item}>Status: {status}</Text> */}
 
+
             <View style={styles.container}>
                 <Text style={styles.item}>Welkom op jouw profiel, {account?.username}!</Text>
             </View>
@@ -181,12 +184,12 @@ export default function Profiel() {
                     }}
                     style={styles.button}>
                     <Text>Opslaan</Text>
+
                 </TouchableOpacity>
             </View>
         </ScrollView>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -225,6 +228,7 @@ const styles = StyleSheet.create({
         borderColor: "black",
         borderRadius: 10,
         padding: 10,
+
 
     },
 });
