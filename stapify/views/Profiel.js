@@ -72,13 +72,24 @@ export default function Profiel() {
                 // setStatus('Account gevonden');
                 setAccount(data.myAccount);
 
-                // setBMI(data.myAccount.bmi);
-                console.log("!!!BMI uit de database!!!");
-                console.log(data.myAccount.bmi);
-                console.log("!!!BMI uit de database!!!");
+                //BMI ophalen
+                setBMI(data.myAccount.bmi.bmi);
             }
         },
     });
+
+    const [updateBMI, { loadingBMI, errorBMI, dataBMI }] = useMutation(
+        Set_BMI,
+        {
+            onCompleted: data => {
+                console.log(data);
+            },
+            onError: error => {
+                Alert.alert('Er is iets fout gegaan');
+                console.log(error);
+            },
+        },
+    );
 
     const readAbleDate = (date) => {
         try {
@@ -113,7 +124,17 @@ export default function Profiel() {
 
         let BMI = gewicht / ((lengte / 100) * (lengte / 100));
 
-        BMI = BMI.toFixed(2);
+        //Maak BMI een Float met 2 decimalen
+        BMI = parseFloat(BMI.toFixed(2));
+
+        //BMI naar de database sturen
+        updateBMI({
+            variables: {
+                cookie: cookie,
+                bmi: BMI,
+            },
+        });
+
 
         return BMI;
     }
@@ -155,6 +176,7 @@ export default function Profiel() {
 
                 <TouchableOpacity
                     onPress={() => {
+                        //BMI berekenen en daadwerkelijk op de pagina zetten
                         setBMI(berekenBMI(gewicht, lengte));
                     }}
                     style={styles.button}>
