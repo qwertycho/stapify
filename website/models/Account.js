@@ -290,6 +290,7 @@ class Accounts {
           IN (SELECT DISTINCT stappen.accountID FROM stappen)
           AND datetime BETWEEN ? AND ?
           GROUP BY stappen.accountID
+          ORDER BY score DESC
           LIMIT 25 
         `,
         [startDate, endDate]

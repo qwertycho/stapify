@@ -14,6 +14,7 @@ import Eetschema from './views/Eetschema';
 import Stappen from './views/Stappen';
 import Profiel from './views/Profiel';
 import Hartslag from './views/Hartslag';
+import Wedstrijd from './views/Wedstrijd';
 
 // Initialize Apollo Client without cache
 const client = new ApolloClient({
@@ -83,6 +84,13 @@ const App = () => {
             <Stack.Screen
               name="Hartslag"
               component={Hartslag}
+              options={{
+                headerTitleAlign: 'center',
+              }}></Stack.Screen>
+
+            <Stack.Screen
+              name="Wedstrijd"
+              component={Wedstrijd}
               options={{
                 headerTitleAlign: 'center',
               }}></Stack.Screen>
