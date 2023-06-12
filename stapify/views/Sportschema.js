@@ -1,28 +1,28 @@
-import React, {useState, useEffect} from 'react';
+import React, { useEffect, useState } from "react";
 import {
-  Text,
-  View,
-  StyleSheet,
   Alert,
   Button,
+  StyleSheet,
+  Text,
   Touchable,
   TouchableOpacity,
-} from 'react-native';
+  View,
+} from "react-native";
 
-import {ApolloError, useMutation, useQuery} from '@apollo/client';
-import {getCookie} from '../models/Cookie';
-import {CHECK_COOKIE} from '../graphs/Login';
-import {GET_SPORTSCHEMA, UPDATE_SPORTSCHEMA} from '../graphs/Sportschema';
-import {ScrollView, TextInput} from 'react-native-gesture-handler';
+import { ApolloError, useMutation, useQuery } from "@apollo/client";
+import { getCookie } from "../models/Cookie";
+import { CHECK_COOKIE } from "../graphs/Login";
+import { GET_SPORTSCHEMA, UPDATE_SPORTSCHEMA } from "../graphs/Sportschema";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
 
 // dropdown
-import SelectDropdown from 'react-native-select-dropdown';
+import SelectDropdown from "react-native-select-dropdown";
 
 export default function Sportschema() {
-  const [cookie, setCookie] = React.useState('');
-  const [TempCookie, setTempCookie] = React.useState('');
+  const [cookie, setCookie] = React.useState("");
+  const [TempCookie, setTempCookie] = React.useState("");
 
-  const [status, setStatus] = React.useState('');
+  const [status, setStatus] = React.useState("");
 
   const [schema, setSchema] = React.useState(null);
   const [sporten, setSporten] = React.useState(null);
@@ -38,15 +38,15 @@ export default function Sportschema() {
   }, []);
 
   // controleren of de cookie nog geldig is
-  const {Cloading, Cerror, Cdata} = useQuery(CHECK_COOKIE, {
-    variables: {cookie: TempCookie},
-    skip: TempCookie === '',
-    onCompleted: data => {
+  const { Cloading, Cerror, Cdata } = useQuery(CHECK_COOKIE, {
+    variables: { cookie: TempCookie },
+    skip: TempCookie === "",
+    onCompleted: (data) => {
       if (data.cookie === true) {
-        setStatus('Ingelogd');
+        setStatus("Ingelogd");
         setCookie(TempCookie);
       } else {
-        setStatus('Niet ingelogd');
+        setStatus("Niet ingelogd");
       }
     },
   });
@@ -79,24 +79,28 @@ export default function Sportschema() {
   }
 
   function matchSport(sportID, sporten) {
-    if (sporten === null) return new sport(0, 'Geen sporten');
+    if (sporten === null) return new sport(0, "Geen sporten");
     for (let i = 0; i < sporten.length; i++) {
       if (sporten[i].sportID === sportID) {
         return new sport(sporten[i].sportID, sporten[i].sport);
       }
+      if (i == sporten.length) {
+        return new sport(15, "rusten");
+      }
     }
   }
 
-  const {loading, error, data} = useQuery(GET_SPORTSCHEMA, {
-    variables: {cookie: cookie},
-    skip: cookie === '',
+  const { loading, error, data } = useQuery(GET_SPORTSCHEMA, {
+    variables: { cookie: cookie },
+    skip: cookie === "",
     cache: false,
-    onCompleted: data => {
+    fetchPolicy: "no-cache",
+    onCompleted: (data) => {
       if (data.myAccount.sportSchema === null || data.sporten === null) {
-        setStatus('Geen sportschema');
+        setStatus("Geen sportschema");
         // setSchema(null);
       } else {
-        setStatus('Sportschema gevonden');
+        setStatus("Sportschema gevonden");
 
         setSporten(data.sporten);
 
@@ -115,17 +119,17 @@ export default function Sportschema() {
     },
   });
 
-  const [updateSportSchema, {loading1, error1, data1}] = useMutation(
+  const [updateSportSchema, { loading1, error1, data1 }] = useMutation(
     UPDATE_SPORTSCHEMA,
     {
-      onCompleted: data => {
-        setStatus('Sportschema geupdate');
+      onCompleted: (data) => {
+        setStatus("Sportschema geupdate");
       },
     },
   );
 
   function updateSchema(dag, sportID) {
-    setStatus('Sportschema wordt geupdate');
+    setStatus("Sportschema wordt geupdate");
 
     schema[dag] = matchSport(sportID, sporten);
 
@@ -145,168 +149,169 @@ export default function Sportschema() {
 
   return (
     <ScrollView>
-        {schema !== null ? (
-        <View style={styles.container}>
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.text}>Maandag</Text>
-              <SelectDropdown
-                data={sporten.map(sport => sport.sport)}
-                onSelect={(selectedItem, index) => {
-                  updateSchema('maandag', sporten[index].sportID);
-                }}
-                defaultButtonText={schema.maandag.sport}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                  // text represented after item is selected
-                  // if data array is an array of objects then return selectedItem.property to render after item is selected
-                  return selectedItem;
-                }}
-                rowTextForSelection={(item, index) => {
-                  // text represented for each item in dropdown
-                  // if data array is an array of objects then return item.property to represent item in dropdown
-                  return item;
-                }}
-              />
+      <Text>{status}</Text>
+      {schema !== null
+        ? (
+          <View style={styles.container}>
+            <View style={styles.table}>
+              <View style={styles.row}>
+                <Text style={styles.text}>Maandag</Text>
+                <SelectDropdown
+                  data={sporten.map((sport) => sport.sport)}
+                  onSelect={(selectedItem, index) => {
+                    updateSchema("maandag", sporten[index].sportID);
+                  }}
+                  defaultButtonText={schema.maandag.sport}
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem;
+                  }}
+                  rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item;
+                  }}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.text}>Dinsdag</Text>
-              <SelectDropdown
-                data={sporten.map(sport => sport.sport)}
-                onSelect={(selectedItem, index) => {
-                  updateSchema('dinsdag', sporten[index].sportID);
-                }}
-                defaultButtonText={schema.dinsdag.sport}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                  // text represented after item is selected
-                  // if data array is an array of objects then return selectedItem.property to render after item is selected
-                  return selectedItem;
-                }}
-                rowTextForSelection={(item, index) => {
-                  // text represented for each item in dropdown
-                  // if data array is an array of objects then return item.property to represent item in dropdown
-                  return item;
-                }}
-              />
+            <View style={styles.table}>
+              <View style={styles.row}>
+                <Text style={styles.text}>Dinsdag</Text>
+                <SelectDropdown
+                  data={sporten.map((sport) => sport.sport)}
+                  onSelect={(selectedItem, index) => {
+                    updateSchema("dinsdag", sporten[index].sportID);
+                  }}
+                  defaultButtonText={schema.dinsdag.sport}
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem;
+                  }}
+                  rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item;
+                  }}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.text}>Woensdag</Text>
-              <SelectDropdown
-                data={sporten.map(sport => sport.sport)}
-                onSelect={(selectedItem, index) => {
-                  updateSchema('woensdag', sporten[index].sportID);
-                }}
-                defaultButtonText={schema.woensdag.sport}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                  return selectedItem;
-                }}
-                rowTextForSelection={(item, index) => {
-                  return item;
-                }}
-              />
+            <View style={styles.table}>
+              <View style={styles.row}>
+                <Text style={styles.text}>Woensdag</Text>
+                <SelectDropdown
+                  data={sporten.map((sport) => sport.sport)}
+                  onSelect={(selectedItem, index) => {
+                    updateSchema("woensdag", sporten[index].sportID);
+                  }}
+                  defaultButtonText={schema.woensdag.sport}
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    return selectedItem;
+                  }}
+                  rowTextForSelection={(item, index) => {
+                    return item;
+                  }}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.text}>Donderdag</Text>
-              <SelectDropdown
-                data={sporten.map(sport => sport.sport)}
-                onSelect={(selectedItem, index) => {
-                  updateSchema('donderdag', sporten[index].sportID);
-                }}
-                defaultButtonText={schema.donderdag.sport}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                  // text represented after item is selected
-                  // if data array is an array of objects then return selectedItem.property to render after item is selected
-                  return selectedItem;
-                }}
-                rowTextForSelection={(item, index) => {
-                  // text represented for each item in dropdown
-                  // if data array is an array of objects then return item.property to represent item in dropdown
-                  return item;
-                }}
-              />
+            <View style={styles.table}>
+              <View style={styles.row}>
+                <Text style={styles.text}>Donderdag</Text>
+                <SelectDropdown
+                  data={sporten.map((sport) => sport.sport)}
+                  onSelect={(selectedItem, index) => {
+                    updateSchema("donderdag", sporten[index].sportID);
+                  }}
+                  defaultButtonText={schema.donderdag.sport}
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem;
+                  }}
+                  rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item;
+                  }}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.text}>Vrijdag</Text>
-              <SelectDropdown
-                data={sporten.map(sport => sport.sport)}
-                onSelect={(selectedItem, index) => {
-                  updateSchema('vrijdag', sporten[index].sportID);
-                }}
-                defaultButtonText={schema.vrijdag.sport}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                  // text represented after item is selected
-                  // if data array is an array of objects then return selectedItem.property to render after item is selected
-                  return selectedItem;
-                }}
-                rowTextForSelection={(item, index) => {
-                  // text represented for each item in dropdown
-                  // if data array is an array of objects then return item.property to represent item in dropdown
-                  return item;
-                }}
-              />
+            <View style={styles.table}>
+              <View style={styles.row}>
+                <Text style={styles.text}>Vrijdag</Text>
+                <SelectDropdown
+                  data={sporten.map((sport) => sport.sport)}
+                  onSelect={(selectedItem, index) => {
+                    updateSchema("vrijdag", sporten[index].sportID);
+                  }}
+                  defaultButtonText={schema.vrijdag.sport}
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem;
+                  }}
+                  rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item;
+                  }}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.text}>Zaterdag</Text>
-              <SelectDropdown
-                data={sporten.map(sport => sport.sport)}
-                onSelect={(selectedItem, index) => {
-                  updateSchema('zaterdag', sporten[index].sportID);
-                }}
-                defaultButtonText={schema.zaterdag.sport}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                  // text represented after item is selected
-                  // if data array is an array of objects then return selectedItem.property to render after item is selected
-                  return selectedItem;
-                }}
-                rowTextForSelection={(item, index) => {
-                  // text represented for each item in dropdown
-                  // if data array is an array of objects then return item.property to represent item in dropdown
-                  return item;
-                }}
-              />
+            <View style={styles.table}>
+              <View style={styles.row}>
+                <Text style={styles.text}>Zaterdag</Text>
+                <SelectDropdown
+                  data={sporten.map((sport) => sport.sport)}
+                  onSelect={(selectedItem, index) => {
+                    updateSchema("zaterdag", sporten[index].sportID);
+                  }}
+                  defaultButtonText={schema.zaterdag.sport}
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem;
+                  }}
+                  rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item;
+                  }}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.text}>Zondag</Text>
-              <SelectDropdown
-                data={sporten.map(sport => sport.sport)}
-                onSelect={(selectedItem, index) => {
-                  updateSchema('zondag', sporten[index].sportID);
-                }}
-                defaultButtonText={schema.zondag.sport}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                  // text represented after item is selected
-                  // if data array is an array of objects then return selectedItem.property to render after item is selected
-                  return selectedItem;
-                }}
-                rowTextForSelection={(item, index) => {
-                  // text represented for each item in dropdown
-                  // if data array is an array of objects then return item.property to represent item in dropdown
-                  return item;
-                }}
-              />
+            <View style={styles.table}>
+              <View style={styles.row}>
+                <Text style={styles.text}>Zondag</Text>
+                <SelectDropdown
+                  data={sporten.map((sport) => sport.sport)}
+                  onSelect={(selectedItem, index) => {
+                    updateSchema("zondag", sporten[index].sportID);
+                  }}
+                  defaultButtonText={schema.zondag.sport}
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem;
+                  }}
+                  rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item;
+                  }}
+                />
+              </View>
             </View>
           </View>
-        </View>
-      ) : (
-        <Text>Geen sportschema</Text>
-      )}
+        )
+        : <Text>Geen sportschema</Text>}
     </ScrollView>
   );
 }
@@ -320,21 +325,21 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 20,
-    color: 'black',
+    color: "black",
   },
 
   button: {
     margin: 10,
     padding: 10,
-    width: '50%',
-    backgroundColor: '#2196F3',
+    width: "50%",
+    backgroundColor: "#2196F3",
     borderRadius: 10,
   },
 
   statusText: {
     fontSize: 10,
-    color: 'grey',
-    textAlign: 'center',
+    color: "grey",
+    textAlign: "center",
     marginTop: 10,
   },
 });
