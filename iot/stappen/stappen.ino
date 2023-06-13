@@ -2,10 +2,13 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include "MMA7660.h"
+#include <ArduinoJson.h>
 MMA7660 accelerometer;
 
-const char *ssid = "Mutahar";
-const char *password = "someGeamers";
+// const char *ssid = "Mutahar";
+// const char *password = "someGeamers";
+const char *ssid = "myPhone";
+const char *password = "arthuristhebest";
 WiFiClientSecure client;
 HTTPClient http;
 const String serverName = "https://www.schoolmoettestdomeinenhebben.nl";
@@ -14,7 +17,7 @@ int httpsPort = 443;
 
 int steps = 0;
 
-String cookie = "";
+String token = "";
 
 void setup()
 {
@@ -35,14 +38,21 @@ void setup()
     accelerometer.init();
 
     // get a cookie from the server
-    HTTPClient http;
-    http.begin(client, serverName, httpsPort, url);
-    String payload = "query { login(username: \"azertycho\", password: \"123\")}";
-    http.header("Content-Type", "application/json");
-    Serial.println(http.POST(payload));
-    
-    String response = http.getString();
-    Serial.println(response);
+    http.begin(client, "https://www.schoolmoettestdomeinenhebben.nl/graphql");
+    http.addHeader("Content-Type", "application/json");
+    String requestBody = "{\"query\":\"query{login(username: \\\"azertycho\\\", password: \\\"123\\\")}\"}";
+    int httpResponseCode = http.POST (requestBody); //Send the request
+    String response = http.getString (); //Get the response payload
+    Serial.println("httpResCode en Response");
+    Serial.println (httpResponseCode); //Print HTTP return code
+    Serial.println (response); //Print request response payload
+
+    StaticJsonDocument<200> doc;
+    deserializeJson(doc, response);
+    token = String(doc["data"]["login"]);
+    Serial.println("token: " + token);
+
+    http.end();
 
     // turn on the built-in LED
     pinMode(LED_BUILTIN, OUTPUT);
@@ -117,11 +127,21 @@ void loop()
 
             if (steps == 10)
             {
+              int aantalStappen = 10;
                 // send step to server
-                http.POST("mutation{stappen(aantalStappen: 10,cookie: " + cookie + ")}");
-                Serial.println("cookie: " + cookie);
+                http.begin(client, "https://www.schoolmoettestdomeinenhebben.nl/graphql");
+                http.addHeader("Content-Type", "application/json");
+                String mutationQuery = "{\"query\": \"mutation { stappen(aantalStappen: " + String(aantalStappen) + ", cookie: \\\"" + token + "\\\") { message code } }\"}";
+                Serial.println("Sending mutation request...");
+                int httpResponseCodeMutation = http.POST(mutationQuery); // Send the request
+                String responseMutation = http.getString(); // Get the response payload
+                Serial.println("Response code: " + String(httpResponseCodeMutation));
+                Serial.println("Response: " + responseMutation);
+                Serial.println(token);
+
+                http.end();
+                Serial.println("Mutation request completed");
                 steps = 0;
-                Serial.println("10 steps sent to server");
             }
 
             delay(900); // Delay between each step detection (adjust as needed)
