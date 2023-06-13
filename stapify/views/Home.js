@@ -22,6 +22,9 @@ const Home = props => {
   const navigeerHartslagen = () => {
     props.navigation.navigate('Hartslag');
   };
+  const navigeerWedstrijd = () => {
+    props.navigation.navigate('Wedstrijd');
+  };
 
   return (
     <ScrollView>
@@ -66,6 +69,16 @@ const Home = props => {
             <Text style={Styles.title}>Eetschema</Text>
             <Text style={Styles.text}>
               Klik om naar jouw Eetschema te gaan{' '}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+
+        <View>
+          <TouchableOpacity style={Styles.NavBox} onPress={navigeerWedstrijd}>
+            <Text style={Styles.title}>Wedstrijd</Text>
+            <Text style={Styles.text}>
+              Klik om de top 25 gebruikers van stapify te zien{' '}
             </Text>
           </TouchableOpacity>
         </View>

@@ -69,7 +69,7 @@ router.get("/", async (req, res) => {
 
   zip.generateAsync({ type: "nodebuffer" }).then(function (content) {
     res.set("Content-Type", "application/zip");
-    res.set("Content-Disposition", "attachment; filename=example.zip");
+    res.set("Content-Disposition", "attachment; filename=account.zip");
     res.send(content);
   });
 });

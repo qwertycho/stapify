@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Linking } from 'react-native';
 import {
     Text,
     View,
@@ -185,6 +186,18 @@ export default function Profiel() {
                     style={styles.button}>
                     <Text>Opslaan</Text>
 
+                </TouchableOpacity>
+
+            </View>
+            <View style={styles.container}>
+                <Text style={styles.item}>Download uw gegevens</Text>
+            <TouchableOpacity
+                    onPress={() => {
+                        //open de webpagina
+                        Linking.openURL('https://www.schoolmoettestdomeinenhebben.nl/avg/inlog');
+                    }}
+                    style={styles.button}>
+                    <Text>Download mijn gegevens</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
